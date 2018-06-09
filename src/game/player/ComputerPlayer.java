@@ -8,16 +8,20 @@ import java.util.Random;
 
 public class ComputerPlayer extends Player {
 
+    private Point lastShot;
+    private Point lastLastShot = null;
+    private Ship currentShip = null;
+
+    private boolean onXLine = false;
+    private boolean onYLine = false;
+
+    private Point start = null;
+    private Point end = null;
+
+    private boolean weGoingTop = true;
+
     public ComputerPlayer(String name) {
         super(name);
-    }
-
-
-    @Override
-    public Point makeShot() {// TODO: 07.06.2018 make it just a bit smarter
-
-        //lastShot = new Point(new Random().nextInt(10), new Random().nextInt(10));
-        return analyzeLastTurn();
     }
 
     @Override
@@ -30,111 +34,57 @@ public class ComputerPlayer extends Player {
         return field;
     }
 
-
-    private Point lastShot;
-
-    GameField playersField = new GameField();
-
-    private Point lastLastShot = null;
-
-    Ship currentShip = null;
-
-    boolean onXLine = false;
-    boolean onYLine = false;
-
-    //for this methods lastLastShot is point for search to X or Y Line
-    Point goXLine() {
-        Point temp = null;
-        if (playersField.getCell(lastShot) == GameField.CellStatus.SHIPSHOT) {
-            lastLastShot = lastShot;
-        }
-        if (playersField.getCell(lastShot) != GameField.CellStatus.EMPTYSHOT) {
-            for (int i = 0; i < 10; i++) {
-                if (isCellCorrect(new Point(lastLastShot.getX() + i, lastLastShot.getY()))) {
-                    temp = new Point(lastLastShot.getX() + i, lastLastShot.getY());
-                    break;
-                }
-            }
-        }
-        if (temp != null) {
-            return temp;
-        }
-
-        for (int i = 0; i < 10; i++) {
-            if (isCellCorrect(new Point(lastLastShot.getX() - i, lastLastShot.getY()))) {
-                temp = new Point(lastLastShot.getX() - i, lastLastShot.getY());
-                break;
-            }
-        }
-        if (temp != null) {
-            return temp;
-        }
-        return null;
-    }
-
-    Point goYLine() {
-        Point temp = null;
-        if (playersField.getCell(lastShot) == GameField.CellStatus.SHIPSHOT) {
-            lastLastShot = lastShot;
-        }
-
-        if (playersField.getCell(lastShot) != GameField.CellStatus.EMPTYSHOT) {
-            for (int i = 0; i < 10; i++) {
-                if (isCellCorrect(new Point(lastLastShot.getX(), lastLastShot.getY() + i))) {
-                    temp = new Point(lastLastShot.getX(), lastLastShot.getY() + i);
-                    break;
-                }
-            }
-        }
-        if (temp != null) {
-            return temp;
-        }
-        for (int i = 0; i < 10; i++) {
-            if (isCellCorrect(new Point(lastLastShot.getX(), lastLastShot.getY() - i))) {
-                temp = new Point(lastLastShot.getX(), lastLastShot.getY() - i);
-                break;
-            }
-        }
-        if (temp != null) {
-            return temp;
-        }
-        return null;
-    }
-
-    public Point analyzeLastTurn() {
+    @Override
+    public Point makeShot() {// TODO: 07.06.2018 make it just a bit smarter
         if (currentShip == null || currentShip.isSank()) { //if ship is sank, or we dont have one
             currentShip = null;
+            lastLastShot = null;
+            start = null;
+            end = null;
             onXLine = false;
             onYLine = false;
-            lastLastShot = null;
+            weGoingTop = true;
             return new Point(new Random().nextInt(10), new Random().nextInt(10));
         }
+
         if (onYLine) {
-            return goYLine();
+            return verticalWay();
         }
         if (onXLine) {
-            return goXLine();
+            return horizontalWay();
         }
-        //stage one - find the right direction of ship
-        if (lastLastShot != null &&
+
+        if (lastLastShot != null && //determine the orientation of the ship (horizontal or vertical)
                 playersField.getCell(lastLastShot) == GameField.CellStatus.SHIPSHOT &&
                 playersField.getCell(lastShot) == GameField.CellStatus.SHIPSHOT
                 && !lastShot.equals(lastLastShot)) {
-            //значит dеверно угадали направление
-            int dx = lastLastShot.getX() - lastShot.getX();
-            int dy = lastLastShot.getY() - lastShot.getY();
-            if (dx != 0) {
+
+            int dx = lastShot.getX() - lastLastShot.getX();
+            if (dx > 0) {
+                end = lastShot;
+                start = lastLastShot;
                 onXLine = true;
-                return goXLine();
+                return horizontalWay();
+            } else if (dx < 0) {
+                end = lastLastShot;
+                start = lastShot;
+                onXLine = true;
+                return horizontalWay();
             }
-            if (dy != 0) {
+
+            int dy = lastShot.getY() - lastLastShot.getY();
+            if (dy > 0) {
+                end = lastShot;
+                start = lastLastShot;
                 onYLine = true;
-                return goYLine();
-
+                return verticalWay();
+            } else if (dy < 0) {
+                end = lastLastShot;
+                start = lastShot;
+                onYLine = true;
+                return verticalWay();
             }
-
         }
-
 
         if (playersField.getCell(lastShot) == GameField.CellStatus.SHIPSHOT) {
             lastLastShot = lastShot;
@@ -146,12 +96,12 @@ public class ComputerPlayer extends Player {
             lastShot = lastLastShot;
         }
 
-        //тут надо стрельнуть в четыре направления
+        return getStartingDirection();
+    }
+
+    private Point getStartingDirection() {
         Point p = null;
-
-
         do {
-
             int randomMove = new Random().nextInt(4);
             switch (randomMove) {
                 case 0:
@@ -165,15 +115,51 @@ public class ComputerPlayer extends Player {
                     break;
                 case 3:
                     p = new Point(lastShot.getX(), lastShot.getY() - 1);
-
-
             }
-        } while (!isCellCorrect(p));
-        return p;
+        } while (!isCellEmpty(p));
 
+        return p;
     }
 
-    @Override
+    //for this methods lastLastShot is point for search to X or Y Line
+    private Point horizontalWay() {
+        if (playersField.getCell(lastShot) == GameField.CellStatus.EMPTYSHOT) {
+            weGoingTop = false;
+        }
+
+        if (isCellEmpty(new Point(end.getX() + 1, end.getY())) && weGoingTop) {
+            end = new Point(end.getX() + 1, end.getY());
+            return end;
+        } else {
+            weGoingTop = false;
+        }
+
+        if (isCellEmpty(new Point(start.getX() - 1, start.getY()))) {
+            start = new Point(start.getX() - 1, start.getY());
+            return start;
+        }
+        return null;
+    }
+
+    private Point verticalWay() {
+        if (playersField.getCell(lastShot) == GameField.CellStatus.EMPTYSHOT) {
+            weGoingTop = false;
+        }
+
+        if (isCellEmpty(new Point(end.getX(), end.getY() + 1)) && weGoingTop) {
+            end = new Point(end.getX(), end.getY() + 1);
+            return end;
+        } else {
+            weGoingTop = false;
+        }
+
+        if (isCellEmpty(new Point(start.getX(), start.getY() - 1))) {
+            start = new Point(start.getX(), start.getY() - 1);
+            return start;
+        }
+        return null;
+    }
+
     public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship) {
         lastShot = point;
         if (currentShip == null) {
@@ -185,14 +171,11 @@ public class ComputerPlayer extends Player {
                 playersField.setCell(ship.getPointsAround()[i], GameField.CellStatus.EMPTYSHOT);
             }
         }
-
     }
 
-    private boolean isCellCorrect(Point p) {
-        return p.getX() >= 0 && p.getX() <= 9
+    private boolean isCellEmpty(Point p) {
+        return p != null && p.getX() >= 0 && p.getX() <= 9
                 && p.getY() >= 0 && p.getY() <= 9
                 && playersField.getCell(p) == GameField.CellStatus.EMPTY;
     }
-
-
 }

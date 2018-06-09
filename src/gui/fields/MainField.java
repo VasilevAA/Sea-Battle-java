@@ -5,8 +5,10 @@ import game.elements.GameField;
 import game.elements.Point;
 import javafx.concurrent.Task;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -28,6 +30,9 @@ public class MainField extends Stage {
 
     private Label statusBar;
 
+    private Label numberOfOpponentShips;
+    private Label numberOfPlayerShips;
+
     private static int cellSize = 28;
 
     public MainField(Game game) {
@@ -43,11 +48,20 @@ public class MainField extends Stage {
         node.getChildren().addAll(opponentPart, sep, playerPart);
 
         statusBar = new Label("Your Turn");
+        statusBar.setMinWidth(60);
         HBox node2 = new HBox();
-        node2.getChildren().addAll(new Label("Status: "), statusBar);
+        node2.setMinHeight(20);
+        node2.getChildren().addAll(new Label(" Status: "), statusBar);
+
+        numberOfOpponentShips = new Label("10");
+        numberOfOpponentShips.setMinWidth(161);
+        numberOfPlayerShips = new Label("10");
+        HBox node3 = new HBox();
+        node3.setMinHeight(20);
+        node3.getChildren().addAll(new Label(" Alive opponents ships: "), numberOfOpponentShips,new Separator(Orientation.VERTICAL), new Label("   Your ships alive: "),numberOfPlayerShips);
 
         VBox mainNode = new VBox();
-        mainNode.getChildren().addAll(node, new Separator(), node2);
+        mainNode.getChildren().addAll(node, new Separator(), node3, new Separator(), node2);
 
         Scene scene = new Scene(mainNode);
         setScene(scene);
@@ -75,6 +89,9 @@ public class MainField extends Stage {
                 }
             }
         }
+
+        numberOfPlayerShips.setText(String.valueOf(game.getPlayer().shipsAlive()));
+        numberOfOpponentShips.setText(String.valueOf(game.getOpponent().shipsAlive()));
     }
 
     private void getShot() {
@@ -88,7 +105,7 @@ public class MainField extends Stage {
                 opponentPart.setDisable(true);
 
                 try {
-                    Thread.sleep(/*new Random().nextInt(2000) + 500*/500);
+                    Thread.sleep(/*new Random().nextInt(2000) + 500*/0);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -100,7 +117,13 @@ public class MainField extends Stage {
             updateFields();
 
             if(game.getWinner() != null){
-                System.out.println("game winner is " + game.getWinner().name());
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Congrats!");
+                alert.setHeaderText(null);
+
+                alert.setContentText(game.getWinner().name() + " won!");
+                alert.showAndWait();
+                close();
                 return;
             }
 
@@ -120,6 +143,7 @@ public class MainField extends Stage {
         VBox vb = new VBox(4);
 
         Label lb1 = new Label("Your field: " + game.getPlayer().name());
+        lb1.setMinHeight(20);
         vb.getStylesheets().add("resources/styles/PlayerField.css");
 
         GridPane grid = new GridPane();
@@ -145,6 +169,8 @@ public class MainField extends Stage {
         VBox vb = new VBox(4);
         vb.getStylesheets().add("resources/styles/OpponentField.css");
         Label lb1 = new Label("Opponent field: " + game.getOpponent().name());
+        lb1.setMinHeight(20);
+        lb1.setAlignment(Pos.CENTER);
 
         GridPane grid = new GridPane();
 
@@ -159,7 +185,6 @@ public class MainField extends Stage {
             for (int j = 0; j < 10; j++) {
                 Button but =
                         opponentField[i][j] = new Button(" ");
-                //but.setFocusTraversable(false);
                 but.setMinSize(cellSize, cellSize);
                 but.setCursor(new ImageCursor(im, im.getWidth() / 2, im.getHeight() / 2));
                 int finalI = i;
@@ -171,8 +196,15 @@ public class MainField extends Stage {
                     updateFields();
 
                     if(game.getWinner() != null){
-                        System.out.println("game winner is " + game.getWinner().name());
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Congrats!");
+                        alert.setHeaderText(null);
+                        alert.setContentText(game.getWinner().name() + " won!");
+
+                        alert.showAndWait();
+                        close();
                         return;
+
                     }
 
                     GameField.CellStatus status = this.game.getOpponent().getCellStatus(new Point(finalJ, finalI));

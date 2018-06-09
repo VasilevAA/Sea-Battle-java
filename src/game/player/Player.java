@@ -10,6 +10,8 @@ public abstract class Player {
 
     private GameField field;
 
+    GameField playersField = new GameField();
+
     Player(String name) {
         this.name = name;
         field = generateField();
@@ -72,7 +74,24 @@ public abstract class Player {
         return count != 20;
     }
 
+    public int shipsAlive(){
+        int ret = 10;
+        for (int i = 0; i < field.getShips().length; i++) {
+            if(field.getShips()[i].isSank()){
+                ret--;
+            }
+        }
+        return ret;
+    }
 
-    public abstract void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship);
+    public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship){
+
+        playersField.setCell(point, shot);
+        if (ship != null && ship.isSank()) {
+            for (int i = 0; i < ship.getPointsAround().length; i++) {
+                playersField.setCell(ship.getPointsAround()[i], GameField.CellStatus.EMPTYSHOT);
+            }
+        }
+    }
 }
 

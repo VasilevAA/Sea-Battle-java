@@ -52,26 +52,6 @@ public class MainMenu{
         Button createGameButton = new Button("Create game room");
         createGameButton.setAlignment(Pos.CENTER);
         createGameButton.setPrefWidth(Double.MAX_VALUE);
-        createGameButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                int k = 10000000;
-
-                Ship.getRandomlyPlacedShips();
-                int min = Ship.cent;
-                Ship.cent = 0;
-
-                for (int i = 0; i < k; i++) {
-                    Ship.getRandomlyPlacedShips();
-
-                    if(Ship.cent < min){
-                        min = Ship.cent;
-                    }
-                    Ship.cent = 0;
-                }
-                System.out.println("average: " + min);
-            }
-        });
 
         Button createGameVsComputerButton = new Button("Play VS computer");
         createGameVsComputerButton.setAlignment(Pos.CENTER);

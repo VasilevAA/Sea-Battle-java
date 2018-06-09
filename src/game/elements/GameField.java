@@ -17,6 +17,10 @@ public class GameField {
         }
     }
 
+    public Ship[] getShips() {
+        return ships;
+    }
+
     public CellStatus[][] getCells() {
         return cells;
     }
