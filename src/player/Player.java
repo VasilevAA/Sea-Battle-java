@@ -20,6 +20,8 @@ public abstract class Player {
         return name;
     }
 
+
+
     public abstract Point makeShot();
 
     public GameField.CellStatus getCellStatus(Point point) {
