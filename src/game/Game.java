@@ -2,6 +2,7 @@ package game;
 
 import game.elements.GameField;
 import game.elements.Point;
+import game.elements.Ship;
 import game.player.Player;
 
 public class Game {
@@ -54,12 +55,13 @@ public class Game {
             point = opponent.makeShot();
         } while (player.getCellStatus(point) == GameField.CellStatus.EMPTYSHOT
                 || player.getCellStatus(point) == GameField.CellStatus.SHIPSHOT);
-
+        Ship tempShip;
         if (player.getCellStatus(point) == GameField.CellStatus.EMPTY) {
-            player.setCellStatus(point, GameField.CellStatus.EMPTYSHOT);
+           tempShip= player.setCellStatus(point, GameField.CellStatus.EMPTYSHOT);
         } else {
-            player.setCellStatus(point, GameField.CellStatus.SHIPSHOT);
+           tempShip= player.setCellStatus(point, GameField.CellStatus.SHIPSHOT);
         }
+        opponent.setInfoAboutLastShot(point,player.getCellStatus(point),tempShip );
 
         player.printField();
         return point;

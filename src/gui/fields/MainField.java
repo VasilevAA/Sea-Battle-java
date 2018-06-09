@@ -88,7 +88,7 @@ public class MainField extends Stage {
                 opponentPart.setDisable(true);
 
                 try {
-                    Thread.sleep(0/*new Random().nextInt(2000) + 500*/);
+                    Thread.sleep(/*new Random().nextInt(2000) + 500*/500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

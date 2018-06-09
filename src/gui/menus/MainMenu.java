@@ -1,7 +1,5 @@
 package gui.menus;
 
-import game.Game;
-import game.elements.Ship;
 import gui.fields.MainField;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,6 +15,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import game.Game;
+import game.elements.Ship;
 import game.player.ComputerPlayer;
 import game.player.HumanPlayer;
 import game.player.Player;

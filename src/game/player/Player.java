@@ -16,11 +16,8 @@ public abstract class Player {
     }
 
     public String name() {
-
         return name;
     }
-
-
 
     public abstract Point makeShot();
 
@@ -28,7 +25,7 @@ public abstract class Player {
         return field.getCell(point);
     }
 
-    public void setCellStatus(Point point, GameField.CellStatus status) {
+    public Ship setCellStatus(Point point, GameField.CellStatus status) {
         field.setCell(point, status);
         if (status == GameField.CellStatus.SHIPSHOT) {
             Ship temp = field.getShip(point);
@@ -40,14 +37,16 @@ public abstract class Player {
                     setCellStatus(aP, GameField.CellStatus.EMPTYSHOT);
                 }
             }
-
+            return temp;
         }
+        return null;
+
     }
 
     public abstract GameField generateField();
 
     public void printField() {
-        System.out.println("game/player " + name + " field:");
+        System.out.println("player " + name + " field:");
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 char c = (getCellStatus(new Point(j, i)) == GameField.CellStatus.EMPTYSHOT) ? 'o' :
@@ -73,5 +72,7 @@ public abstract class Player {
         return count != 20;
     }
 
+
+    public abstract void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship);
 }
 

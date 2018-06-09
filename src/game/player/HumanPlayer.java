@@ -26,4 +26,8 @@ public class HumanPlayer extends Player {
         return field;
     }
 
+    @Override
+    public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship) {
+        //
+    }
 }
