@@ -1,8 +1,8 @@
-package player;
+package game.player;
 
-import gameelements.GameField;
-import gameelements.Point;
-import gameelements.Ship;
+import game.elements.GameField;
+import game.elements.Point;
+import game.elements.Ship;
 
 import java.util.Random;
 

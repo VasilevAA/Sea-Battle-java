@@ -1,4 +1,4 @@
-package gameelements;
+package game.elements;
 
 public class Point {
     private  int x;

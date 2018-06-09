@@ -1,8 +1,4 @@
-package gameelements;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+package game.elements;
 
 public class GameField {
 

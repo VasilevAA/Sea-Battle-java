@@ -1,8 +1,8 @@
-package player;
+package game.player;
 
-import gameelements.GameField;
-import gameelements.Point;
-import gameelements.Ship;
+import game.elements.GameField;
+import game.elements.Point;
+import game.elements.Ship;
 
 public abstract class Player {
 
@@ -47,7 +47,7 @@ public abstract class Player {
     public abstract GameField generateField();
 
     public void printField() {
-        System.out.println("player " + name + " field:");
+        System.out.println("game/player " + name + " field:");
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 char c = (getCellStatus(new Point(j, i)) == GameField.CellStatus.EMPTYSHOT) ? 'o' :

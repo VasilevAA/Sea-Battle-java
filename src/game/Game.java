@@ -1,8 +1,8 @@
 package game;
 
-import gameelements.GameField;
-import gameelements.Point;
-import player.Player;
+import game.elements.GameField;
+import game.elements.Point;
+import game.player.Player;
 
 public class Game {
 

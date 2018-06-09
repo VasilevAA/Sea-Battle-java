@@ -1,22 +1,19 @@
 package gui.fields;
 
 import game.Game;
-import gameelements.GameField;
-import gameelements.Point;
+import game.elements.GameField;
+import game.elements.Point;
 import javafx.concurrent.Task;
 import javafx.geometry.Orientation;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -62,19 +59,19 @@ public class MainField extends Stage {
                 GameField.CellStatus status = game.getOpponent().getCellStatus(new Point(j, i));
 
                 if (status == GameField.CellStatus.SHIPSHOT) {
-                    opponentField[i][j].setStyle("-fx-background-color:blue;-fx-background-image:url(css/img/fire.gif);");
+                    opponentField[i][j].setStyle("-fx-background-color:blue;-fx-background-image:url(resources/img/fire.gif);");
                     opponentField[i][j].setDisable(true);
                 } else if (status == GameField.CellStatus.EMPTYSHOT) {
-                    opponentField[i][j].setStyle("-fx-background-image:url(css/img/empty.png);");
+                    opponentField[i][j].setStyle("-fx-background-image:url(resources/img/empty.png);");
                     opponentField[i][j].setDisable(true);
                 }
 
                 status = game.getPlayer().getCellStatus(new Point(j, i));
 
                 if (status == GameField.CellStatus.SHIPSHOT) {
-                    playerField[i][j].setStyle("-fx-background-color:red;-fx-background-image:url(css/img/fire.gif);");
+                    playerField[i][j].setStyle("-fx-background-color:red;-fx-background-image:url(resources/img/fire.gif);");
                 } else if (status == GameField.CellStatus.EMPTYSHOT) {
-                    playerField[i][j].setStyle("-fx-background-image:url(css/img/empty.png);");
+                    playerField[i][j].setStyle("-fx-background-image:url(resources/img/empty.png);");
                 }
             }
         }
@@ -123,11 +120,10 @@ public class MainField extends Stage {
         VBox vb = new VBox(4);
 
         Label lb1 = new Label("Your field: " + game.getPlayer().name());
-        vb.getStylesheets().add("css/PlayerField.css");
+        vb.getStylesheets().add("resources/styles/PlayerField.css");
 
         GridPane grid = new GridPane();
-//        grid.setHgap(1);
-//        grid.setVgap(1.5);
+
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 Button but =
@@ -147,21 +143,18 @@ public class MainField extends Stage {
     private VBox setUpOpponentField() {
 
         VBox vb = new VBox(4);
-        vb.getStylesheets().add("css/OpponentField.css");
+        vb.getStylesheets().add("resources/styles/OpponentField.css");
         Label lb1 = new Label("Opponent field: " + game.getOpponent().name());
 
         GridPane grid = new GridPane();
 
-        Image im = new Image("css/img/cursor.png");
+        Image im = new Image("resources/img/cursor.png");
 //        ImageView v = new ImageView(im);
 //        v.setRotate(45);
 //        SnapshotParameters params = new SnapshotParameters();
 //        params.setFill(Color.TRANSPARENT);
 //        im = v.snapshot(params, null);
 
-
-        //grid.setHgap(1);
-       // grid.setVgap(1.5);
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 Button but =

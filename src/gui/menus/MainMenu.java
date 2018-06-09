@@ -1,7 +1,7 @@
 package gui.menus;
 
 import game.Game;
-import gameelements.Ship;
+import game.elements.Ship;
 import gui.fields.MainField;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,9 +17,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import player.ComputerPlayer;
-import player.HumanPlayer;
-import player.Player;
+import game.player.ComputerPlayer;
+import game.player.HumanPlayer;
+import game.player.Player;
 
 public class MainMenu{
 
@@ -29,7 +29,7 @@ public class MainMenu{
         VBox vb = new VBox(10);
         vb.setPadding(new Insets(10));
         vb.setAlignment(Pos.CENTER);
-        primaryStage.getIcons().add(new Image("css/img/cursor.png"));
+        primaryStage.getIcons().add(new Image("resources/img/cursor.png"));
 
         Scene scene = new Scene(vb);
 
