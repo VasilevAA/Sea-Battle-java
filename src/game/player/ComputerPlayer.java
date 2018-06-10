@@ -35,7 +35,7 @@ public class ComputerPlayer extends Player {
     }
 
     @Override
-    public Point makeShot() {// TODO: 07.06.2018 make it just a bit smarter
+    public Point makeShot() {
         if (currentShip == null || currentShip.isSank()) { //if ship is sank, or we dont have one
             currentShip = null;
             lastLastShot = null;

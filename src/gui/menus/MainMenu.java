@@ -1,8 +1,6 @@
 package gui.menus;
 
 import gui.fields.MainField;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,7 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import game.Game;
-import game.elements.Ship;
 import game.player.ComputerPlayer;
 import game.player.HumanPlayer;
 import game.player.Player;
@@ -32,7 +29,7 @@ public class MainMenu{
         primaryStage.getIcons().add(new Image("resources/img/cursor.png"));
 
         Scene scene = new Scene(vb);
-
+        scene.getStylesheets().setAll("resources/styles/modena.css");
         primaryStage.setWidth(200);
         primaryStage.setHeight(200);
         primaryStage.setScene(scene);
@@ -77,6 +74,7 @@ public class MainMenu{
         vb.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(vb);
+        scene.getStylesheets().setAll("resources/styles/modena.css");
 
         w.setWidth(240);
         w.setHeight(120);

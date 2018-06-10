@@ -4,6 +4,7 @@ import game.Game;
 import game.elements.GameField;
 import game.elements.Point;
 import javafx.concurrent.Task;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.ImageCursor;
@@ -39,31 +40,35 @@ public class MainField extends Stage {
         this.game = game;
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
+        getIcons().add(new Image("resources/img/cursor.png"));
+        setTitle("Battleship");
 
         HBox node = new HBox();
         Separator sep = new Separator(Orientation.VERTICAL);
         sep.setMinWidth(20);
         opponentPart = setUpOpponentField();
         VBox playerPart = setUpPlayerField();
+        node.setPadding(new Insets(5));
         node.getChildren().addAll(opponentPart, sep, playerPart);
 
         statusBar = new Label("Your Turn");
         statusBar.setMinWidth(60);
         HBox node2 = new HBox();
         node2.setMinHeight(20);
-        node2.getChildren().addAll(new Label(" Status: "), statusBar);
+        node2.getChildren().addAll(new Label("   Status: "), statusBar);
 
         numberOfOpponentShips = new Label("10");
-        numberOfOpponentShips.setMinWidth(161);
+        numberOfOpponentShips.setMinWidth(159);
         numberOfPlayerShips = new Label("10");
         HBox node3 = new HBox();
         node3.setMinHeight(20);
-        node3.getChildren().addAll(new Label(" Alive opponents ships: "), numberOfOpponentShips,new Separator(Orientation.VERTICAL), new Label("   Your ships alive: "),numberOfPlayerShips);
+        node3.getChildren().addAll(new Label("   Alive opponents ships: "), numberOfOpponentShips,new Separator(Orientation.VERTICAL), new Label("   Your ships alive: "),numberOfPlayerShips);
 
         VBox mainNode = new VBox();
         mainNode.getChildren().addAll(node, new Separator(), node3, new Separator(), node2);
 
         Scene scene = new Scene(mainNode);
+        scene.getStylesheets().setAll("resources/styles/modena.css");
         setScene(scene);
     }
 
@@ -142,7 +147,7 @@ public class MainField extends Stage {
 
         VBox vb = new VBox(4);
 
-        Label lb1 = new Label("Your field: " + game.getPlayer().name());
+        Label lb1 = new Label("  Your field: " + game.getPlayer().name());
         lb1.setMinHeight(20);
         vb.getStylesheets().add("resources/styles/PlayerField.css");
 
@@ -168,7 +173,7 @@ public class MainField extends Stage {
 
         VBox vb = new VBox(4);
         vb.getStylesheets().add("resources/styles/OpponentField.css");
-        Label lb1 = new Label("Opponent field: " + game.getOpponent().name());
+        Label lb1 = new Label("  Opponent field: " + game.getOpponent().name());
         lb1.setMinHeight(20);
         lb1.setAlignment(Pos.CENTER);
 
