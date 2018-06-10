@@ -73,7 +73,7 @@ public class Ship {
 
              Ship[] now =   Ship.getRandomlyPlacedShips();
 
-            if(Ship.cent > min){
+            if(Ship.cent < min){
                 min = Ship.cent;
                 ret = now;
             }
