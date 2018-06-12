@@ -3,6 +3,7 @@ package gui.fields;
 import game.Game;
 import game.elements.GameField;
 import game.elements.Point;
+import game.elements.Ship;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -18,6 +19,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.util.HashSet;
 
 public class MainField extends Stage {
 
@@ -87,7 +90,7 @@ public class MainField extends Stage {
                 status = game.getPlayer().getCellStatus(new Point(j, i));
 
                 if (status == GameField.CellStatus.SHIPSHOT) {
-                    playerField[i][j].setStyle("-fx-background-color:red;-fx-background-image:url(resources/img/fire.gif);");
+                    playerField[i][j].setStyle("-fx-background-image:url(resources/img/fire.gif);");
                 } else if (status == GameField.CellStatus.EMPTYSHOT) {
                     playerField[i][j].setStyle("-fx-background-image:url(resources/img/empty.png);");
                 }
@@ -159,13 +162,46 @@ public class MainField extends Stage {
         Image ima = new Image("resources/img/sea.png");
         grid.setBackground(new Background(new BackgroundImage(ima,BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,BackgroundSize.DEFAULT)));
 
+        HashSet<Ship> ships = new HashSet<>();
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 Button but =
                         playerField[i][j] = new Button(" ");
                 but.setMinSize(cellSize, cellSize);
                 if (game.getPlayer().getCellStatus(new Point(j, i)) == GameField.CellStatus.SHIP) {
-                    but.setStyle("-fx-background-color: limegreen");
+
+                   Ship temp =  game.getPlayer().getField().getShip(new Point(j,i));
+
+                   if(!ships.contains(temp)) {
+                       ships.add(temp);
+                       int sizeTemp = temp.getSize();
+                       int orient = temp.getOrientation();
+                       Point points[] = temp.getPoints();
+                       ImageView vi;
+                       if (sizeTemp == 4) {
+                           for (int k = 0; k < sizeTemp; k++) {
+
+                               vi = new ImageView("resources/img/ships/size" + sizeTemp + "/" + String.valueOf(k + 1) + ".png");
+
+
+                               switch (orient) {
+                                   case 1:
+                                       break;
+                                   case 2:
+                                       vi.setRotate(90);
+                                       break;
+                                   case 3:
+                                       vi.setRotate(180);
+                                       break;
+                                   case 4:
+                                       vi.setRotate(270);
+                               }
+                               grid.add(vi, points[k].getX(), points[k].getY());
+                           }
+                       }
+                   }
+
+
                 }
                 but.setDisable(true);
                 grid.add(but, j, i);

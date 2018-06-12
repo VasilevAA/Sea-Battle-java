@@ -37,7 +37,7 @@ public class Ship {
         this.points = points;
     }
 
-    Point[] getPoints() {
+    public Point[] getPoints() {
         return points;
     }
 

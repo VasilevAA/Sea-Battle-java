@@ -1,8 +1,5 @@
 package game.elements;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GameField {
 
     public enum CellStatus {EMPTYSHOT, EMPTY, SHIPSHOT, SHIP}

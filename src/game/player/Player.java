@@ -25,6 +25,10 @@ public abstract class Player {
         return field.getCell(point);
     }
 
+    public GameField getField() {
+        return field;
+    }
+
     public Ship setCellStatus(Point point, GameField.CellStatus status) {
         field.setCell(point, status);
         if (status == GameField.CellStatus.SHIPSHOT) {
