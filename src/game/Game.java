@@ -7,8 +7,6 @@ import game.player.Player;
 
 public class Game {
 
-    public enum ShotType {WOUND, MISS, FINISH}
-
     private Player player; // It's you
 
     private Player opponent; // your opponent (comp or real human)
@@ -27,7 +25,7 @@ public class Game {
         return opponent;
     }
 
-    public void makeShot(Point point) {
+    public void sendShotToOpponent(Point point) {
 
         if (opponent.getCellStatus(point) == GameField.CellStatus.EMPTY) {
             opponent.setCellStatus(point, GameField.CellStatus.EMPTYSHOT);
@@ -48,13 +46,9 @@ public class Game {
     }
 
     // TODO: 07.06.2018 maybe we need hierarchy of game classes: human game and computer
-    public Point getShot() {
+    public Point receiveShotFromOpponent() {
 
-        Point point;
-        do {
-            point = opponent.makeShot();
-        } while (player.getCellStatus(point) == GameField.CellStatus.EMPTYSHOT
-                || player.getCellStatus(point) == GameField.CellStatus.SHIPSHOT);
+        Point point = opponent.makeShot();
         Ship tempShip;
         if (player.getCellStatus(point) == GameField.CellStatus.EMPTY) {
            tempShip= player.setCellStatus(point, GameField.CellStatus.EMPTYSHOT);

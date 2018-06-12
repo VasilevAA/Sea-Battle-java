@@ -99,9 +99,9 @@ public class MainField extends Stage {
         numberOfOpponentShips.setText(String.valueOf(game.getOpponent().shipsAlive()));
     }
 
-    private void getShot() {
+    private void receiveShot() {
 
-        Point point = game.getShot();
+        Point point = game.receiveShotFromOpponent();
         statusBar.setText("Opponent Turn");
 
         Task task = new Task() {
@@ -121,26 +121,31 @@ public class MainField extends Stage {
         task.setOnSucceeded(event -> {
             updateFields();
 
-            if(game.getWinner() != null){
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Congrats!");
-                alert.setHeaderText(null);
-
-                alert.setContentText(game.getWinner().name() + " won!");
-                alert.showAndWait();
-                close();
-                return;
-            }
+            if (winnerIsFound()) return;
 
             GameField.CellStatus status = game.getPlayer().getCellStatus(point);
 
             if (status == GameField.CellStatus.SHIPSHOT) {
-                getShot();
+                receiveShot();
             }
             statusBar.setText("Your Turn");
         });
 
         new Thread(task).start();
+    }
+
+    private boolean winnerIsFound() {
+        if(game.getWinner() != null){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Congrats!");
+            alert.setHeaderText(null);
+
+            alert.setContentText(game.getWinner().name() + " won!");
+            alert.showAndWait();
+            close();
+            return true;
+        }
+        return false;
     }
 
     private VBox setUpPlayerField() {
@@ -197,25 +202,15 @@ public class MainField extends Stage {
 
                 but.setOnAction(event -> {
 
-                    this.game.makeShot(new Point(finalJ, finalI));
+                    this.game.sendShotToOpponent(new Point(finalJ, finalI));
                     updateFields();
 
-                    if(game.getWinner() != null){
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Congrats!");
-                        alert.setHeaderText(null);
-                        alert.setContentText(game.getWinner().name() + " won!");
-
-                        alert.showAndWait();
-                        close();
-                        return;
-
-                    }
+                    if (winnerIsFound()) return;
 
                     GameField.CellStatus status = this.game.getOpponent().getCellStatus(new Point(finalJ, finalI));
 
                     if (status != GameField.CellStatus.SHIPSHOT) {
-                        getShot();
+                        receiveShot();
                     }
                 });
 

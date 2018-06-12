@@ -104,8 +104,9 @@ public class Ship {
                 }
             }
         }
-        System.out.println(cent);
 
+        System.out.println(cent);
+        cent = 0;
         return tempShips.clone();
     }
 
@@ -121,7 +122,6 @@ public class Ship {
 
         placeShipCorrectly(firstPoint, ship, shipDirection);
 
-
     }
 
     private static int getCorrectPositionForShip(Point firstPoint, int size) {
@@ -135,7 +135,7 @@ public class Ship {
                 case 1:
                     if (firstPoint.getX() + size <= 10) {
                         status = tempField[firstPoint.getY()][firstPoint.getX()+i];
-                        if (status == GameField.CellStatus.SHIP || status == GameField.CellStatus.EMPTYSHOT) {
+                        if (status != GameField.CellStatus.EMPTY) {
                             t = false;
                         }
                     } else {
@@ -145,7 +145,7 @@ public class Ship {
                 case 2:
                     if (firstPoint.getY() + size <= 10) {
                         status = tempField[firstPoint.getY()+i][firstPoint.getX()];
-                        if (status == GameField.CellStatus.SHIP || status == GameField.CellStatus.EMPTYSHOT) {
+                        if (status != GameField.CellStatus.EMPTY) {
                             t = false;
                         }
                     } else {
@@ -155,7 +155,7 @@ public class Ship {
                 case 3:
                     if (firstPoint.getX() - size >= -1) {
                         status = tempField[firstPoint.getY()][firstPoint.getX()-i];
-                        if (status == GameField.CellStatus.SHIP || status == GameField.CellStatus.EMPTYSHOT) {
+                        if (status != GameField.CellStatus.EMPTY) {
                             t = false;
                         }
                     } else {
@@ -165,7 +165,7 @@ public class Ship {
                 case 4:
                     if (firstPoint.getY() - size >= -1) {
                         status = tempField[firstPoint.getY()-i][firstPoint.getX()];
-                        if (status == GameField.CellStatus.SHIP || status == GameField.CellStatus.EMPTYSHOT) {
+                        if (status != GameField.CellStatus.EMPTY) {
                             t = false;
                         }
                     } else {
@@ -234,8 +234,12 @@ public class Ship {
                 }
             }
         }
+
+        int e = 5;
+
         return temp;
     }
+
 
     private static boolean isPointCorrect(Point p) {
         return p.getX() >= 0 && p.getY() >= 0

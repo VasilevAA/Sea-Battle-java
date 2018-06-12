@@ -9,10 +9,10 @@ import java.util.Random;
 public class ComputerPlayer extends Player {
 
     private Point lastShot;
-    private Point lastLastShot = null;
+    private Point saveOfSuccessfulLastShot = null;
     private Ship currentShip = null;
 
-    private boolean onXLine = false;
+    private boolean onXLine = false; //what direction we going
     private boolean onYLine = false;
 
     private Point start = null;
@@ -38,62 +38,66 @@ public class ComputerPlayer extends Player {
     public Point makeShot() {
         if (currentShip == null || currentShip.isSank()) { //if ship is sank, or we dont have one
             currentShip = null;
-            lastLastShot = null;
+            saveOfSuccessfulLastShot = null;
             start = null;
             end = null;
             onXLine = false;
             onYLine = false;
             weGoingTop = true;
-            return new Point(new Random().nextInt(10), new Random().nextInt(10));
+            Point retPoint;
+            do {
+                retPoint = new Point(new Random().nextInt(10), new Random().nextInt(10));
+            } while (playersField.getCell(retPoint) != GameField.CellStatus.EMPTY);
+            return retPoint;
         }
 
         if (onYLine) {
             return verticalWay();
-        }
-        if (onXLine) {
+        }else if (onXLine) {
             return horizontalWay();
         }
 
-        if (lastLastShot != null && //determine the orientation of the ship (horizontal or vertical)
-                playersField.getCell(lastLastShot) == GameField.CellStatus.SHIPSHOT &&
+        if (saveOfSuccessfulLastShot != null && //determine the orientation of the ship (horizontal or vertical)
+                playersField.getCell(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIPSHOT &&
                 playersField.getCell(lastShot) == GameField.CellStatus.SHIPSHOT
-                && !lastShot.equals(lastLastShot)) {
+                && !lastShot.equals(saveOfSuccessfulLastShot)) {
 
-            int dx = lastShot.getX() - lastLastShot.getX();
+            int dx = lastShot.getX() - saveOfSuccessfulLastShot.getX();
             if (dx > 0) {
                 end = lastShot;
-                start = lastLastShot;
+                start = saveOfSuccessfulLastShot;
                 onXLine = true;
                 return horizontalWay();
             } else if (dx < 0) {
-                end = lastLastShot;
+                end = saveOfSuccessfulLastShot;
                 start = lastShot;
                 onXLine = true;
                 return horizontalWay();
             }
 
-            int dy = lastShot.getY() - lastLastShot.getY();
+            int dy = lastShot.getY() - saveOfSuccessfulLastShot.getY();
             if (dy > 0) {
                 end = lastShot;
-                start = lastLastShot;
+                start = saveOfSuccessfulLastShot;
                 onYLine = true;
                 return verticalWay();
             } else if (dy < 0) {
-                end = lastLastShot;
+                end = saveOfSuccessfulLastShot;
                 start = lastShot;
                 onYLine = true;
                 return verticalWay();
             }
         }
 
-        if (playersField.getCell(lastShot) == GameField.CellStatus.SHIPSHOT) {
-            lastLastShot = lastShot;
+        if (playersField.getCell(lastShot) == GameField.CellStatus.SHIPSHOT) {//ship is shot
+            saveOfSuccessfulLastShot = lastShot;
         }
-        if (lastLastShot != null &&
-                playersField.getCell(lastLastShot) == GameField.CellStatus.SHIPSHOT &&
+
+        if (saveOfSuccessfulLastShot != null &&
+                playersField.getCell(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIPSHOT &&
                 playersField.getCell(lastShot) == GameField.CellStatus.EMPTYSHOT) {
-            //значит неверно угадали вернуться назад
-            lastShot = lastLastShot;
+            //our guess was wrong
+            lastShot = saveOfSuccessfulLastShot;
         }
 
         return getStartingDirection();
@@ -121,7 +125,7 @@ public class ComputerPlayer extends Player {
         return p;
     }
 
-    //for this methods lastLastShot is point for search to X or Y Line
+    //for this methods saveOfSuccessfulLastShot is point for search to X or Y Line
     private Point horizontalWay() {
         if (playersField.getCell(lastShot) == GameField.CellStatus.EMPTYSHOT) {
             weGoingTop = false;
