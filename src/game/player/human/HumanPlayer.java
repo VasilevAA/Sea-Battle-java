@@ -1,8 +1,9 @@
-package game.player;
+package game.player.human;
 
 import game.elements.GameField;
 import game.elements.Point;
 import game.elements.Ship;
+import game.player.Player;
 
 public class HumanPlayer extends Player {
 
@@ -26,8 +27,5 @@ public class HumanPlayer extends Player {
         return field;
     }
 
-    @Override
-    public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship) {
-        //
-    }
+
 }

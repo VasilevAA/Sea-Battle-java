@@ -1,3 +1,4 @@
+
 .button:hover{
     -fx-background-color: hotpink;
 }
@@ -12,14 +13,14 @@
 .button:disabled
 {
     -fx-opacity: 1.0;
-    -fx-background-color: dodgerblue;
+    -fx-background-color: skyblue;
 
 }
 
 .button
 {
 
-    -fx-background-color: dodgerblue;
+    -fx-background-color: skyblue;
     -fx-background-radius: 0;
     -fx-border-color: white;
     -fx-border-width: 0.2px;

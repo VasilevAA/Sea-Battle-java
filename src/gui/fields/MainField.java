@@ -14,9 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -62,7 +61,7 @@ public class MainField extends Stage {
         numberOfPlayerShips = new Label("10");
         HBox node3 = new HBox();
         node3.setMinHeight(20);
-        node3.getChildren().addAll(new Label("   Alive opponents ships: "), numberOfOpponentShips,new Separator(Orientation.VERTICAL), new Label("   Your ships alive: "),numberOfPlayerShips);
+        node3.getChildren().addAll(new Label("   Alive opponents ships: "), numberOfOpponentShips, new Separator(Orientation.VERTICAL), new Label("   Your ships alive: "), numberOfPlayerShips);
 
         VBox mainNode = new VBox();
         mainNode.getChildren().addAll(node, new Separator(), node3, new Separator(), node2);
@@ -78,10 +77,10 @@ public class MainField extends Stage {
                 GameField.CellStatus status = game.getOpponent().getCellStatus(new Point(j, i));
 
                 if (status == GameField.CellStatus.SHIPSHOT) {
-                    opponentField[i][j].setStyle("-fx-background-color:blue;-fx-background-image:url(resources/img/fire.gif);");
+                    opponentField[i][j].setStyle("-fx-background-color:rgba(0,0,0,0.8);-fx-background-image:url(resources/img/fire.gif);");
                     opponentField[i][j].setDisable(true);
                 } else if (status == GameField.CellStatus.EMPTYSHOT) {
-                    opponentField[i][j].setStyle("-fx-background-image:url(resources/img/empty.png);");
+                    opponentField[i][j].setStyle("-fx-background-color: transparent;");
                     opponentField[i][j].setDisable(true);
                 }
 
@@ -110,7 +109,7 @@ public class MainField extends Stage {
                 opponentPart.setDisable(true);
 
                 try {
-                    Thread.sleep(/*new Random().nextInt(2000) + 500*/500);
+                    Thread.sleep(/*new Random().nextInt(2000) + 500*/100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -135,7 +134,7 @@ public class MainField extends Stage {
     }
 
     private boolean winnerIsFound() {
-        if(game.getWinner() != null){
+        if (game.getWinner() != null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Congrats!");
             alert.setHeaderText(null);
@@ -157,6 +156,8 @@ public class MainField extends Stage {
         vb.getStylesheets().add("resources/styles/PlayerField.css");
 
         GridPane grid = new GridPane();
+        Image ima = new Image("resources/img/sea.png");
+        grid.setBackground(new Background(new BackgroundImage(ima,BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,BackgroundSize.DEFAULT)));
 
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -183,7 +184,9 @@ public class MainField extends Stage {
         lb1.setAlignment(Pos.CENTER);
 
         GridPane grid = new GridPane();
-
+        Image ima = new Image("resources/img/sea.png");
+        grid.setBackground(new Background(new BackgroundImage(ima,BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,BackgroundSize.DEFAULT)));
+       // grid.add(new ImageView(new Image("resources/img/empty.png")),0,0);
         Image im = new Image("resources/img/cursor.png");
 //        ImageView v = new ImageView(im);
 //        v.setRotate(45);

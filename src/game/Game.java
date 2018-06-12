@@ -5,6 +5,8 @@ import game.elements.Point;
 import game.elements.Ship;
 import game.player.Player;
 
+import java.util.HashSet;
+
 public class Game {
 
     private Player player; // It's you
@@ -32,15 +34,16 @@ public class Game {
         } else {
             opponent.setCellStatus(point, GameField.CellStatus.SHIPSHOT);
         }
+        player.setInfoAboutLastShot(point,opponent.getCellStatus(point),null,opponent.maxSizeOfAlivesShips());
 
         opponent.printField();
 
     }
 
-    public Player getWinner(){
-        if(!player.hasAliveShips())
+    public Player getWinner() {
+        if (player.allShipsDead())
             return opponent;
-        if(!opponent.hasAliveShips())
+        if (opponent.allShipsDead())
             return player;
         return null;
     }
@@ -51,13 +54,16 @@ public class Game {
         Point point = opponent.makeShot();
         Ship tempShip;
         if (player.getCellStatus(point) == GameField.CellStatus.EMPTY) {
-           tempShip= player.setCellStatus(point, GameField.CellStatus.EMPTYSHOT);
+            tempShip = player.setCellStatus(point, GameField.CellStatus.EMPTYSHOT);
         } else {
-           tempShip= player.setCellStatus(point, GameField.CellStatus.SHIPSHOT);
+            tempShip = player.setCellStatus(point, GameField.CellStatus.SHIPSHOT);
         }
-        opponent.setInfoAboutLastShot(point,player.getCellStatus(point),tempShip );
+        opponent.setInfoAboutLastShot(point, player.getCellStatus(point), tempShip,player.maxSizeOfAlivesShips());
 
         player.printField();
         return point;
     }
+
+
+
 }

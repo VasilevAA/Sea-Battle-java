@@ -1,13 +1,13 @@
 .button:disabled
 {
     -fx-opacity: 1.0;
-    -fx-background-color: royalblue;
+    -fx-background-color: transparent;
 
 }
 
 .button
 {
-    -fx-background-color: blue;
+    -fx-background-color: transparent;
     -fx-background-radius: 0;
 
     -fx-text-color: black;

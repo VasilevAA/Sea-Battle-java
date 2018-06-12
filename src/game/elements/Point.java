@@ -1,8 +1,8 @@
 package game.elements;
 
 public class Point {
-    private  int x;
-    private  int y;
+    private int x;
+    private int y;
 
     public Point(int x, int y) {
         this.x = x;
@@ -19,6 +19,11 @@ public class Point {
 
     @Override
     public boolean equals(Object obj) {
-        return (((Point)obj).getX() == x )&& (((Point)obj).getY() == y);
+        return (((Point) obj).getX() == x) && (((Point) obj).getY() == y);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
     }
 }

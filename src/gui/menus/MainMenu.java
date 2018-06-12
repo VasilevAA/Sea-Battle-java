@@ -1,5 +1,6 @@
 package gui.menus;
 
+import game.elements.Point;
 import gui.fields.MainField;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,11 +15,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import game.Game;
-import game.player.ComputerPlayer;
-import game.player.HumanPlayer;
-import game.player.Player;
+import game.player.computer.ComputerPlayer;
+import game.player.human.HumanPlayer;
 
-public class MainMenu{
+import java.util.HashSet;
+import java.util.Set;
+
+public class MainMenu {
 
     private TextField inputNickname = new TextField("nickname");
 
@@ -56,17 +59,17 @@ public class MainMenu{
         createGameVsComputerButton.setOnAction(event -> createVSComputerGame());
 
         inputNickname.textProperty().addListener((observable, oldValue, newValue) -> {
-            createGameButton.setDisable(newValue.isEmpty() || newValue.length()<3);
-            findGameButton.setDisable(newValue.isEmpty()|| newValue.length()<3);
-            createGameVsComputerButton.setDisable(newValue.isEmpty()|| newValue.length()<3);
+            createGameButton.setDisable(newValue.isEmpty() || newValue.length() < 3);
+            findGameButton.setDisable(newValue.isEmpty() || newValue.length() < 3);
+            createGameVsComputerButton.setDisable(newValue.isEmpty() || newValue.length() < 3);
         });
 
-        vb.getChildren().addAll(hb1,findGameButton,createGameButton,new Separator(),createGameVsComputerButton);
+        vb.getChildren().addAll(hb1, findGameButton, createGameButton, new Separator(), createGameVsComputerButton);
         primaryStage.show();
     }
 
 
-    private void findRoomWindow(){
+    private void findRoomWindow() {
         Stage w = new Stage();
         w.initModality(Modality.APPLICATION_MODAL);
         VBox vb = new VBox(10);
@@ -90,15 +93,15 @@ public class MainMenu{
         Button findGameButton = new Button("Search");
         findGameButton.setAlignment(Pos.CENTER);
 
-        vb.getChildren().addAll(hb1,findGameButton);
+        vb.getChildren().addAll(hb1, findGameButton);
 
 
         w.show();
     }
 
-    private void createVSComputerGame(){
+    private void createVSComputerGame() {
 
-        Game mGame = new Game(new HumanPlayer(inputNickname.getText()),new ComputerPlayer("Computer"));
+        Game mGame = new Game(new HumanPlayer(inputNickname.getText()), new ComputerPlayer("Computer"));
 
         MainField playerField = new MainField(mGame);
         playerField.show();

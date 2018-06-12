@@ -14,6 +14,12 @@ public class Ship {
 
     private int size;
 
+    private int orientation;
+
+    public int getOrientation() {
+        return orientation;
+    }
+
     private Ship(int size) {
         this.size = size;
         points = new Point[size];
@@ -35,7 +41,7 @@ public class Ship {
         return points;
     }
 
-    private int getSize() {
+    public int getSize() {
         return size;
     }
 
@@ -60,27 +66,6 @@ public class Ship {
     private static Ship[] tempShips = new Ship[10];
     private static GameField.CellStatus[][] tempField = new GameField.CellStatus[10][10];
 
-    public static int cent=0;
-
-    public static  Ship[] getGoodRandom(){
-        int k = 100000;
-        Ship[] ret;
-        ret = Ship.getRandomlyPlacedShips();
-        int min = Ship.cent;
-        Ship.cent = 0;
-
-        for (int i = 0; i < k; i++) {
-
-             Ship[] now =   Ship.getRandomlyPlacedShips();
-
-            if(Ship.cent < min){
-                min = Ship.cent;
-                ret = now;
-            }
-            Ship.cent = 0;
-        }
-        return  ret;
-    }
 
     public static Ship[] getRandomlyPlacedShips() {
         for (int i = 0; i < tempField.length; i++) {
@@ -97,16 +82,6 @@ public class Ship {
             placeShip(tempShips[i], size);
         }
 
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (tempField[i][j] == GameField.CellStatus.EMPTYSHOT) {
-                    cent++;
-                }
-            }
-        }
-
-        System.out.println(cent);
-        cent = 0;
         return tempShips.clone();
     }
 
@@ -134,7 +109,7 @@ public class Ship {
             switch (k) {
                 case 1:
                     if (firstPoint.getX() + size <= 10) {
-                        status = tempField[firstPoint.getY()][firstPoint.getX()+i];
+                        status = tempField[firstPoint.getY()][firstPoint.getX() + i];
                         if (status != GameField.CellStatus.EMPTY) {
                             t = false;
                         }
@@ -144,7 +119,7 @@ public class Ship {
                     break;
                 case 2:
                     if (firstPoint.getY() + size <= 10) {
-                        status = tempField[firstPoint.getY()+i][firstPoint.getX()];
+                        status = tempField[firstPoint.getY() + i][firstPoint.getX()];
                         if (status != GameField.CellStatus.EMPTY) {
                             t = false;
                         }
@@ -154,7 +129,7 @@ public class Ship {
                     break;
                 case 3:
                     if (firstPoint.getX() - size >= -1) {
-                        status = tempField[firstPoint.getY()][firstPoint.getX()-i];
+                        status = tempField[firstPoint.getY()][firstPoint.getX() - i];
                         if (status != GameField.CellStatus.EMPTY) {
                             t = false;
                         }
@@ -164,7 +139,7 @@ public class Ship {
                     break;
                 case 4:
                     if (firstPoint.getY() - size >= -1) {
-                        status = tempField[firstPoint.getY()-i][firstPoint.getX()];
+                        status = tempField[firstPoint.getY() - i][firstPoint.getX()];
                         if (status != GameField.CellStatus.EMPTY) {
                             t = false;
                         }
@@ -210,6 +185,7 @@ public class Ship {
         }
         ship.setPoints(shipPoints);
         ship.setPointsAround(pointsAroundShip);
+        ship.orientation = shipDirection;
     }
 
     private static Point[] getPointsAroundShip(Point[] points) {
@@ -234,8 +210,6 @@ public class Ship {
                 }
             }
         }
-
-        int e = 5;
 
         return temp;
     }

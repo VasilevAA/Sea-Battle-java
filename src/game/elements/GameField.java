@@ -1,5 +1,8 @@
 package game.elements;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameField {
 
     public enum CellStatus {EMPTYSHOT, EMPTY, SHIPSHOT, SHIP}
@@ -43,7 +46,7 @@ public class GameField {
         return null;
     }
 
-    public void placeShips(Ship[] nships){
+    public void placeShips(Ship[] nships) {
         ships = nships;
         for (Ship ship : ships) {
             for (int j = 0; j < ship.getPoints().length; j++) {
@@ -53,6 +56,8 @@ public class GameField {
 
         }
     }
+
+
 
 }
 

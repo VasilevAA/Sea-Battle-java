@@ -1,12 +1,13 @@
-package game.player;
+package game.player.computer;
 
 import game.elements.GameField;
 import game.elements.Point;
 import game.elements.Ship;
 
-import java.util.Random;
+import java.util.*;
 
-public class ComputerPlayer extends Player {
+class AIModule {
+    private GameField playersField = new GameField();
 
     private Point lastShot;
     private Point saveOfSuccessfulLastShot = null;
@@ -20,22 +21,26 @@ public class ComputerPlayer extends Player {
 
     private boolean weGoingTop = true;
 
-    public ComputerPlayer(String name) {
-        super(name);
+    int maxSizedShip = 4;
+
+    void setInformationAboutLastShot(Point p, GameField.CellStatus status, Ship ship, int maxSize) {
+        lastShot = p;
+        playersField.setCell(p, status);
+        maxSizedShip = maxSize;
+
+
+        if (currentShip == null) {
+            currentShip = ship;
+        }
+        if (ship != null && ship.isSank()) {
+            for (int i = 0; i < ship.getPointsAround().length; i++) {
+                playersField.setCell(ship.getPointsAround()[i], GameField.CellStatus.EMPTYSHOT);
+            }
+        }
     }
 
-    @Override
-    public GameField generateField() {
 
-        GameField field = new GameField();
-
-        field.placeShips(Ship.getRandomlyPlacedShips());
-
-        return field;
-    }
-
-    @Override
-    public Point makeShot() {
+    Point calculateCorrectShot() {
         if (currentShip == null || currentShip.isSank()) { //if ship is sank, or we dont have one
             currentShip = null;
             saveOfSuccessfulLastShot = null;
@@ -44,16 +49,17 @@ public class ComputerPlayer extends Player {
             onXLine = false;
             onYLine = false;
             weGoingTop = true;
-            Point retPoint;
-            do {
-                retPoint = new Point(new Random().nextInt(10), new Random().nextInt(10));
-            } while (playersField.getCell(retPoint) != GameField.CellStatus.EMPTY);
-            return retPoint;
+//            System.out.println(maxSizedShip);
+
+            Point[] possibleRet = getExpectablePoints();
+            int e = new Random().nextInt(possibleRet.length);
+            return possibleRet[e];
+
         }
 
         if (onYLine) {
             return verticalWay();
-        }else if (onXLine) {
+        } else if (onXLine) {
             return horizontalWay();
         }
 
@@ -164,22 +170,78 @@ public class ComputerPlayer extends Player {
         return null;
     }
 
-    public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship) {
-        lastShot = point;
-        if (currentShip == null) {
-            this.currentShip = ship;
-        }
-        playersField.setCell(point, shot);
-        if (ship != null && ship.isSank()) {
-            for (int i = 0; i < ship.getPointsAround().length; i++) {
-                playersField.setCell(ship.getPointsAround()[i], GameField.CellStatus.EMPTYSHOT);
-            }
-        }
-    }
-
     private boolean isCellEmpty(Point p) {
         return p != null && p.getX() >= 0 && p.getX() <= 9
                 && p.getY() >= 0 && p.getY() <= 9
                 && playersField.getCell(p) == GameField.CellStatus.EMPTY;
     }
+
+
+    private Point[] getExpectablePoints() {
+
+        Point[][] tempField = new Point[10 ][10];
+        for (int i = 0; i < tempField.length; i++) {
+            for (int j = 0; j < tempField.length; j++) {
+                tempField[i][j] = new Point(j,i);
+
+            }
+        }
+
+        HashSet<Point> ret = new HashSet<>();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (playersField.getCell(new Point(j, i)) == GameField.CellStatus.EMPTY) {
+                    ret.addAll(pointsForGivenPoint(new Point(j, i),tempField));
+                }
+            }
+        }
+
+        Point[] retTrue = new Point[ret.size()];
+
+        retTrue = ret.toArray(retTrue);
+
+
+
+        return retTrue;
+
+    }
+
+    private HashSet<Point> pointsForGivenPoint(Point p, Point[][] tempField) {
+
+
+
+
+        HashSet<Point> ret = new HashSet<>();
+
+
+        boolean isRight = true;
+        for (int i = 0; i < maxSizedShip; i++) {
+            if(!isCellEmpty(new Point(p.getX() + i, p.getY()))){
+                isRight = false;
+            }
+        }
+
+        if(isRight){
+            for (int i = 0; i < maxSizedShip; i++) {
+                ret.add(tempField[p.getY()][p.getX()+i]);
+            }
+        }
+
+        isRight = true;
+        for (int i = 0; i < maxSizedShip; i++) {
+            if(!isCellEmpty(new Point(p.getX(), p.getY()+i))){
+                isRight = false;
+            }
+        }
+
+        if(isRight){
+            for (int i = 0; i < maxSizedShip; i++) {
+                ret.add(tempField[p.getY()+i][p.getX()]);
+            }
+        }
+
+        return ret;
+    }
+
+
 }
