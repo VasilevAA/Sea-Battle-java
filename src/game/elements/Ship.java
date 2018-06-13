@@ -99,7 +99,7 @@ public class Ship {
 
     }
 
-    private static int getCorrectPositionForShip(Point firstPoint, int size) {
+     static int getCorrectPositionForShip(Point firstPoint, int size) {
 
         int k = new Random().nextInt(4) + 1;
         boolean t = true;

@@ -5,8 +5,6 @@ import game.elements.Point;
 import game.elements.Ship;
 import game.player.Player;
 
-import java.util.HashSet;
-
 public class Game {
 
     private Player player; // It's you

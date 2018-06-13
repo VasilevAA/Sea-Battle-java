@@ -48,11 +48,15 @@ public class GameField {
         for (Ship ship : ships) {
             for (int j = 0; j < ship.getPoints().length; j++) {
                 setCell(ship.getPoints()[j], CellStatus.SHIP);
-
             }
-
         }
     }
+
+//    public void placeShip(Ship ship){
+//        HashSet<Ship> shps = new HashSet<>();
+//
+//
+//    }
 
 
 

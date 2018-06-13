@@ -1,6 +1,10 @@
 package gui.menus;
 
+import game.Game;
+import game.elements.GameField;
 import game.elements.Point;
+import game.player.computer.ComputerPlayer;
+import game.player.human.HumanPlayer;
 import gui.fields.MainField;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,12 +18,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import game.Game;
-import game.player.computer.ComputerPlayer;
-import game.player.human.HumanPlayer;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class MainMenu {
 
@@ -101,7 +99,17 @@ public class MainMenu {
 
     private void createVSComputerGame() {
 
-        Game mGame = new Game(new HumanPlayer(inputNickname.getText()), new ComputerPlayer("Computer"));
+
+        HumanPlayer human = new HumanPlayer(inputNickname.getText());
+
+        new FieldCreator(human).showAndWait();
+
+        if(human.getCellStatus(new Point(0,0)) == GameField.CellStatus.SHIPSHOT){
+            return;
+        }
+
+
+        Game mGame = new Game(human, new ComputerPlayer("Computer"));
 
         MainField playerField = new MainField(mGame);
         playerField.show();

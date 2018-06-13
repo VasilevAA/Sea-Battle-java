@@ -4,6 +4,7 @@ import game.Game;
 import game.elements.GameField;
 import game.elements.Point;
 import game.elements.Ship;
+import game.player.Player;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -19,8 +20,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-import java.util.HashSet;
 
 public class MainField extends Stage {
 
@@ -80,7 +79,11 @@ public class MainField extends Stage {
                 GameField.CellStatus status = game.getOpponent().getCellStatus(new Point(j, i));
 
                 if (status == GameField.CellStatus.SHIPSHOT) {
-                    opponentField[i][j].setStyle("-fx-background-color:rgba(0,0,0,0.8);-fx-background-image:url(resources/img/fire.gif);");
+                    if (game.getOpponent().getField().getShip(new Point(j, i)).isSank()) {
+                        opponentField[i][j].setStyle("-fx-background-color:transparent;-fx-background-image:url(resources/img/fire.gif);");
+                    } else {
+                        opponentField[i][j].setStyle("-fx-background-color:black;-fx-background-image:url(resources/img/fire.gif);");
+                    }
                     opponentField[i][j].setDisable(true);
                 } else if (status == GameField.CellStatus.EMPTYSHOT) {
                     opponentField[i][j].setStyle("-fx-background-color: transparent;");
@@ -160,49 +163,15 @@ public class MainField extends Stage {
 
         GridPane grid = new GridPane();
         Image ima = new Image("resources/img/sea.png");
-        grid.setBackground(new Background(new BackgroundImage(ima,BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,BackgroundSize.DEFAULT)));
+        grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 
-        HashSet<Ship> ships = new HashSet<>();
+        drawShip(grid,game.getPlayer());
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 Button but =
                         playerField[i][j] = new Button(" ");
                 but.setMinSize(cellSize, cellSize);
-                if (game.getPlayer().getCellStatus(new Point(j, i)) == GameField.CellStatus.SHIP) {
 
-                   Ship temp =  game.getPlayer().getField().getShip(new Point(j,i));
-
-                   if(!ships.contains(temp)) {
-                       ships.add(temp);
-                       int sizeTemp = temp.getSize();
-                       int orient = temp.getOrientation();
-                       Point points[] = temp.getPoints();
-                       ImageView vi;
-                       if (sizeTemp == 4) {
-                           for (int k = 0; k < sizeTemp; k++) {
-
-                               vi = new ImageView("resources/img/ships/size" + sizeTemp + "/" + String.valueOf(k + 1) + ".png");
-
-
-                               switch (orient) {
-                                   case 1:
-                                       break;
-                                   case 2:
-                                       vi.setRotate(90);
-                                       break;
-                                   case 3:
-                                       vi.setRotate(180);
-                                       break;
-                                   case 4:
-                                       vi.setRotate(270);
-                               }
-                               grid.add(vi, points[k].getX(), points[k].getY());
-                           }
-                       }
-                   }
-
-
-                }
                 but.setDisable(true);
                 grid.add(but, j, i);
             }
@@ -221,19 +190,15 @@ public class MainField extends Stage {
 
         GridPane grid = new GridPane();
         Image ima = new Image("resources/img/sea.png");
-        grid.setBackground(new Background(new BackgroundImage(ima,BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT,BackgroundPosition.CENTER,BackgroundSize.DEFAULT)));
-       // grid.add(new ImageView(new Image("resources/img/empty.png")),0,0);
+        grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
         Image im = new Image("resources/img/cursor.png");
-//        ImageView v = new ImageView(im);
-//        v.setRotate(45);
-//        SnapshotParameters params = new SnapshotParameters();
-//        params.setFill(Color.TRANSPARENT);
-//        im = v.snapshot(params, null);
 
+        drawShip(grid,game.getOpponent());
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 Button but =
                         opponentField[i][j] = new Button(" ");
+                but.setFocusTraversable(false);
                 but.setMinSize(cellSize, cellSize);
                 but.setCursor(new ImageCursor(im, im.getWidth() / 2, im.getHeight() / 2));
                 int finalI = i;
@@ -259,6 +224,35 @@ public class MainField extends Stage {
         }
         vb.getChildren().addAll(lb1, grid);
         return vb;
+    }
+
+    private void drawShip(GridPane grid, Player player) {
+        Ship[] ships = player.getField().getShips();
+
+        for (Ship shep : ships) {
+            int tempSize = shep.getSize();
+            int orientation = shep.getOrientation();
+            Point[] points = shep.getPoints();
+            for (int k = 0; k < tempSize; k++) {
+                ImageView vi = new ImageView("resources/img/ships/size" + tempSize + "/" + String.valueOf(k + 1) + ".png");
+                switch (orientation) {
+                    case 1:
+                        grid.add(vi, points[k].getX(), points[k].getY());
+                        break;
+                    case 2:
+                        vi.setRotate(90);
+                        grid.add(vi, points[k].getX(), points[k].getY());
+                        break;
+                    case 3:
+                        vi.setRotate(180);
+                        grid.add(vi, points[k].getX(), points[k].getY());
+                        break;
+                    case 4:
+                        vi.setRotate(270);
+                        grid.add(vi, points[k].getX(), points[k].getY());
+                }
+            }
+        }
     }
 
 }

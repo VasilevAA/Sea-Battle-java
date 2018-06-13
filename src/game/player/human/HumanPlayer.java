@@ -2,7 +2,6 @@ package game.player.human;
 
 import game.elements.GameField;
 import game.elements.Point;
-import game.elements.Ship;
 import game.player.Player;
 
 public class HumanPlayer extends Player {
@@ -20,11 +19,9 @@ public class HumanPlayer extends Player {
     @Override
     public GameField generateField() {
 
-        GameField field = new GameField();
+        //field.placeShips(Ship.getRandomlyPlacedShips());
 
-        field.placeShips(Ship.getRandomlyPlacedShips());
-
-        return field;
+        return new GameField();
     }
 
 
