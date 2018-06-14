@@ -20,7 +20,7 @@ public class Ship {
         return orientation;
     }
 
-    private Ship(int size) {
+    public Ship(int size) {
         this.size = size;
         points = new Point[size];
     }
@@ -64,15 +64,11 @@ public class Ship {
 
 
     private static Ship[] tempShips = new Ship[10];
-    private static GameField.CellStatus[][] tempField = new GameField.CellStatus[10][10];
+    private static GameField.CellStatus[][] tempField = new GameField.CellStatus[10][10] ;
 
 
     public static Ship[] getRandomlyPlacedShips() {
-        for (int i = 0; i < tempField.length; i++) {
-            for (int j = 0; j < tempField.length; j++) {
-                tempField[i][j] = GameField.CellStatus.EMPTY;
-            }
-        }
+        clearField();
 
         for (int i = 0, size = 4; i < 10; i++) {
             if (i == 1 || i == 3 || i == 6) {
@@ -91,7 +87,7 @@ public class Ship {
         Point firstPoint;
         do {
             firstPoint = new Point(new Random().nextInt(10), new Random().nextInt(10));
-            shipDirection = getCorrectPositionForShip(firstPoint, size);
+            shipDirection = getCorrectPositionForShip(firstPoint, size,new Random().nextInt(4)+1);
         }
         while (shipDirection == 0);
 
@@ -99,14 +95,21 @@ public class Ship {
 
     }
 
-     static int getCorrectPositionForShip(Point firstPoint, int size) {
+    public static void clearField(){
+        for (int i = 0; i < tempField.length; i++) {
+            for (int j = 0; j < tempField.length; j++) {
+                tempField[i][j] = GameField.CellStatus.EMPTY;
+            }
+        }
+    }
 
-        int k = new Random().nextInt(4) + 1;
+
+    private static int getCorrectPositionForShip(Point firstPoint, int size, int direction) {
         boolean t = true;
 
         for (int i = 0; i < size; i++) {
             GameField.CellStatus status;
-            switch (k) {
+            switch (direction) {
                 case 1:
                     if (firstPoint.getX() + size <= 10) {
                         status = tempField[firstPoint.getY()][firstPoint.getX() + i];
@@ -149,10 +152,10 @@ public class Ship {
                     break;
             }
         }
-        return t ? k : 0;
+        return t ? direction : 0;
     }
 
-    private static void placeShipCorrectly(Point firstPoint, Ship ship, int shipDirection) {
+    public static void placeShipCorrectly(Point firstPoint, Ship ship, int shipDirection) {
 
         Point[] shipPoints = new Point[ship.getSize()];
         Point[] pointsAroundShip;

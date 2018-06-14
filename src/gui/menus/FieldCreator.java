@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,192 +29,182 @@ class FieldCreator extends Stage {
     private GridPane grid = null;
 
 
+    class ShipItem extends ImageView {
+        private int direction;
+        private int size;
+
+        int getDirection() {
+            return direction;
+        }
+
+        int getSize() {
+            return size;
+        }
+
+        void setDirection(int direction) {
+            this.direction = direction;
+        }
+
+        ShipItem(String name, int direction, int size) {
+            super(name);
+            this.direction = direction;
+            this.size = size;
+
+        }
+    }
 
     FieldCreator(Player player) {
         field = new GameField();
         this.player = player;
         setResizable(false);
-
         initModality(Modality.APPLICATION_MODAL);
 
-        HBox hb = new HBox();
 
+        HBox hb = new HBox();
         hb.getChildren().addAll(setUpPlayerField(), new Separator(Orientation.VERTICAL), setUpRightPart());
 
         Scene scene = new Scene(hb);
+        scene.getStylesheets().add("resources/styles/modena.css");
         setScene(scene);
 
+//        label that, ship placement was canceled (need in main menu)
         setOnCloseRequest(event -> player.getField().setCell(new Point(0, 0), GameField.CellStatus.SHIPSHOT));
 
     }
 
     private GridPane setUpPlayerField() {
-
-
         grid = new GridPane();
         grid.getStylesheets().add("resources/styles/PlayerField.css");
         Image ima = new Image("resources/img/sea.png");
         grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 
-
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                Button but =
-                        playerField[i][j] = new Button(" ");
-
-                int finalI = i;
-                int finalJ = j;
-                but.setOnDragDropped((DragEvent event) -> {
-                    Dragboard db = event.getDragboard();
-
-                    if (db.hasString()) {
-                        String id = db.getString();
-
-                        ImageView temp = (ImageView) pane.lookup("#" + id);
-                        ImageView temp2 = (ImageView) grid.lookup("#" + id);
-                        if (temp != null) {
-
-                           double cosplain = temp.getImage().getWidth()/temp.getImage().getHeight();
-
-                           int row = 1;
-                           int col = 1;
-                           if(cosplain > 1){
-                               col = (int)cosplain;
-
-                           }
-                           if(cosplain <1){
-                               row = (int)(1/cosplain);
-                           }
-
-                            grid.add(temp, finalJ, finalI, col,row);
-
-
-                            pane.getChildren().remove(temp);
-                        }
-
-                        if (temp2 != null) {
-                            grid.getChildren().remove(temp2);
-
-                            double cosplain = temp2.getImage().getWidth()/temp2.getImage().getHeight();
-
-                            int row = 1;
-                            int col = 1;
-                            if(cosplain > 1){
-                                col = (int)cosplain;
-
-                            }
-                            if(cosplain <1){
-                                row = (int)(1/cosplain);
-                            }
-                            grid.add(temp2, finalJ, finalI, col,row);
-                        }
-
-
-                    }
-
-                    event.setDropCompleted(true);
-                    event.consume();
-                });
-
-
-                but.setOnDragOver((DragEvent event) -> {
-                    if (
-                            event.getDragboard().hasString()) {
-                        event.acceptTransferModes(TransferMode.MOVE);
-                    }
-                    event.consume();
-                });
-
-                but.setMinSize(28, 28);
-
-//                but.setDisable(true);
-                grid.add(but, j, i);
+                playerField[i][j] = makeCell(i, j);
+                grid.add(playerField[i][j], j, i);
             }
         }
 
         return grid;
     }
 
+    private Button makeCell(int i, int j) {
+        Button cell = new Button("");
+
+        setUpDroppingInCell(i, j, cell);
+        setUpDragingInCell(cell);
+
+        cell.setMinSize(28, 28);
+
+        return cell;
+    }
+
+    private void setUpDragingInCell(Button cell) {
+        cell.setOnDragOver((DragEvent event) -> {
+            String id = event.getDragboard().getString();
+            ShipItem shipItem = pane.lookup("#" + id) != null
+                    ? (ShipItem) pane.lookup("#" + id)
+                    : (ShipItem) grid.lookup("#" + id);
+
+            int direction = shipItem.getDirection();
+            int size = shipItem.getSize();
+
+            int x = GridPane.getColumnIndex(cell);
+            int y = GridPane.getRowIndex(cell);
+
+            if (event.getDragboard().hasString() && field.isPlaceCorrectForShip(new Point(x, y), size, direction)) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+    }
+
+    private void setUpDroppingInCell(int i, int j, Button cell) {
+        cell.setOnDragDropped((DragEvent event) -> {
+            Dragboard db = event.getDragboard();
+
+            String id = db.getString();
+
+            ShipItem itemInPane = (ShipItem) pane.lookup("#" + id);
+            ShipItem itemInGrid = (ShipItem) grid.lookup("#" + id);
+
+            if (itemInPane != null) {
+                int direction = itemInPane.getDirection();
+                int size = itemInPane.getSize();
+
+                Ship ship = new Ship(size);
+                Ship.clearField();
+                Ship.placeShipCorrectly(new Point(j, i), ship, direction);
+
+                field.placeShip(ship);
+
+                grid.add(itemInPane, j, i, direction == 1 ? size : 1, direction == 2 ? size : 1);
+                pane.getChildren().remove(itemInPane);
+            }
+
+            if (itemInGrid != null) {
+                int direction = itemInGrid.getDirection();
+                int size = itemInGrid.getSize();
+
+                int x = GridPane.getColumnIndex(itemInGrid);
+                int y = GridPane.getRowIndex(itemInGrid);
+
+                field.removeShip(new Point(x, y));
+
+                Ship ship = new Ship(size);
+                Ship.clearField();
+                Ship.placeShipCorrectly(new Point(j, i), ship, direction);
+
+                field.placeShip(ship);
+
+                grid.getChildren().remove(itemInGrid);
+                grid.add(itemInGrid, j, i, direction == 1 ? size : 1, direction == 2 ? size : 1);
+            }
+
+            updatePlayerField();
+
+            event.setDropCompleted(true);
+            event.consume();
+        });
+    }
+
 
     private VBox setUpRightPart() {
         VBox vb = new VBox();
-
         vb.setPrefWidth(400);
 
-
-        Button generateRandom = new Button("Random");
-        generateRandom.setOnAction(event -> {
-            field = new GameField();
-            field.placeShips(Ship.getRandomlyPlacedShips());
-            updateFields();
-        });
-
-        Button ok = new Button("Start game");
-        ok.setOnAction(event -> {
-            player.getField().placeShips(field.getShips());
-            close();
-        });
-
-
         pane = new FlowPane();
-        pane.setPadding(new Insets(0));
-
-        pane.setMinHeight(240);
+        pane.setMinHeight(230);
         pane.setAlignment(Pos.CENTER);
         pane.setHgap(10);
         pane.setVgap(10);
-
 
         for (int i = 0, size = 4; i < 10; i++) {
             if (i == 1 || i == 3 || i == 6) {
                 size--;
             }
-            ImageView imv = new ImageView("resources/img/ships/size" + size + "/full.png");
-            imv.setId(this.getClass().getSimpleName() + System.currentTimeMillis() + i);
-            imv.setOnDragDetected(event -> {
-                Dragboard db = imv.startDragAndDrop(TransferMode.MOVE);
-
-
-                db.setDragView(imv.getImage(), 14, 14);
-
-
-                ClipboardContent cont = new ClipboardContent();
-                cont.putString(imv.getId());
-                db.setContent(cont);
-                event.consume();
-            });
-
-            imv.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.SECONDARY
-                        && pane.lookup("#" + imv.getId()) != null) {
-                    imv.setPreserveRatio(true);
-                    imv.setRotate(90);
-                    Image nIm = imv.snapshot(new SnapshotParameters(), null);
-                    imv.setRotate(0);
-                    imv.setImage(nIm);
-
-                }
-                event.consume();
-            });
+            ShipItem imv = makeShipItem(i, size);
             pane.getChildren().add(imv);
         }
 
         pane.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
-            boolean success = false;
             if (db.hasString()) {
                 String id = db.getString();
 
-                ImageView temp = (ImageView) grid.lookup("#" + id);
+                ShipItem temp = (ShipItem) grid.lookup("#" + id);
                 if (temp != null) {
+                    int x = GridPane.getColumnIndex(temp);
+                    int y = GridPane.getRowIndex(temp);
 
                     grid.getChildren().remove(temp);
+                    field.removeShip(new Point(x, y));
 
                     pane.getChildren().add(temp);
-                    success = true;
                 }
             }
-            event.setDropCompleted(success);
+            updatePlayerField();
+            event.setDropCompleted(true);
             event.consume();
         });
 
@@ -225,8 +216,38 @@ class FieldCreator extends Stage {
             event.consume();
         });
 
+        Button generateRandom = new Button("Random");
+        generateRandom.setOnAction(event -> {
+            field = new GameField();
+            field.placeShips(Ship.getRandomlyPlacedShips());
+            updatePlayerField();
+        });
 
-        HBox hb = new HBox(generateRandom, ok);
+
+        Button clear = new Button("Clear Field");
+        clear.setOnAction(event -> {
+            field = new GameField();
+            updatePlayerField();
+        });
+
+        Label lab = new Label();
+        lab.setMinWidth(140);
+        lab.setAlignment(Pos.CENTER_RIGHT);
+
+        Button ok = new Button("Start game");
+        ok.setOnAction(event -> {
+            if (field.getShips() == null || field.getShips().length != 10) {
+                lab.setText("Place all ships!");
+                return;
+            }
+
+            player.getField().placeShips(field.getShips());
+            close();
+        });
+
+        HBox hb = new HBox(generateRandom, clear, lab, ok);
+        hb.setSpacing(10);
+        hb.setPadding(new Insets(10));
 
         vb.getChildren().addAll(pane, new Separator(), hb);
 
@@ -234,17 +255,56 @@ class FieldCreator extends Stage {
         return vb;
     }
 
+    private ShipItem makeShipItem(int index, int size) {
+        ShipItem shipItem = new ShipItem("resources/img/ships/size" + size + "/full.png", 1, size);
+        shipItem.setId(this.getClass().getSimpleName() + System.currentTimeMillis() + index);
 
-    private void updateFields() {
+        shipItem.setOnDragDetected(event -> {
+            Dragboard db = shipItem.startDragAndDrop(TransferMode.MOVE);
+            db.setDragView(shipItem.getImage(), 14, 14);
+
+            ClipboardContent cont = new ClipboardContent();
+            cont.putString(shipItem.getId());
+            db.setContent(cont);
+            event.consume();
+        });
+
+        shipItem.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.SECONDARY
+                    && pane.lookup("#" + shipItem.getId()) != null) {
+                shipItem.setRotate(90);
+                Image nIm = shipItem.snapshot(new SnapshotParameters(), null);
+                shipItem.setRotate(0);
+                shipItem.setImage(nIm);
+                shipItem.setDirection(shipItem.getDirection() == 1 ? 2 : 1);
+
+            }
+            event.consume();
+        });
+        return shipItem;
+    }
+
+
+    private void updatePlayerField() {
+
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                GameField.CellStatus status = field.getCell(new Point(j, i));
-                if (status == GameField.CellStatus.SHIP) {
-                    playerField[i][j].setStyle("-fx-background-color: orange;");
-                } else if (status == GameField.CellStatus.EMPTY) {
-                    playerField[i][j].setStyle("-fx-background-color: transparent;");
-                }
+                field.setCell(new Point(j, i), GameField.CellStatus.EMPTY);
+                playerField[i][j].setStyle("-fx-background-color: transparent;");
 
+            }
+        }
+
+        if (field.getShips() != null) {
+            for (Ship ship : field.getShips()) {
+                for (int i = 0; i < ship.getPoints().length; i++) {
+                    field.setCell(ship.getPoints()[i], GameField.CellStatus.SHIP);
+                    playerField[ship.getPoints()[i].getY()][ship.getPoints()[i].getX()].setStyle("-fx-background-color: orange;");
+                }
+                for (int i = 0; i < ship.getPointsAround().length; i++) {
+                    field.setCell(ship.getPointsAround()[i], GameField.CellStatus.EMPTYSHOT);
+
+                }
             }
         }
     }

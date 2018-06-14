@@ -62,6 +62,4 @@ public class Game {
         return point;
     }
 
-
-
 }

@@ -98,8 +98,6 @@ public class MainMenu {
     }
 
     private void createVSComputerGame() {
-
-
         HumanPlayer human = new HumanPlayer(inputNickname.getText());
 
         new FieldCreator(human).showAndWait();
@@ -108,7 +106,6 @@ public class MainMenu {
             return;
         }
 
-
         Game mGame = new Game(human, new ComputerPlayer("Computer"));
 
         MainField playerField = new MainField(mGame);
@@ -116,5 +113,3 @@ public class MainMenu {
 
     }
 }
-
-
