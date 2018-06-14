@@ -31,7 +31,7 @@ public class MainMenu {
 
         Scene scene = new Scene(vb);
         scene.getStylesheets().setAll("resources/styles/modena.css");
-        primaryStage.setWidth(200);
+        primaryStage.setWidth(235);
         primaryStage.setHeight(200);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);

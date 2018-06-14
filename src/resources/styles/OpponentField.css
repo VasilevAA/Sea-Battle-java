@@ -3,33 +3,21 @@
     -fx-background-color: hotpink;
 }
 
-.button:pressed
-{
+.button:pressed{
   -fx-background-color: deeppink;
-
 }
 
 
-.button:disabled
-{
+.button:disabled{
     -fx-opacity: 1.0;
-    -fx-background-color: skyblue;
-
 }
 
-.button
-{
-
+.button{
     -fx-background-color: skyblue;
     -fx-background-radius: 0;
     -fx-border-color: white;
     -fx-border-width: 0.2px;
 }
 
-.button:focused{
-    -fx-border-width: 1px;
-    -fx-border-color: black;
-
-}
 
 
