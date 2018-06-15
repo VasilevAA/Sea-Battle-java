@@ -1,6 +1,6 @@
-package game.player.computer;
+package game.players.computer;
 
-import game.elements.GameField;
+import game.elements.fields.GameField;
 import game.elements.Point;
 import game.elements.Ship;
 
@@ -25,7 +25,7 @@ class AIModule {
 
     void setInformationAboutLastShot(Point p, GameField.CellStatus status, Ship ship, int maxSize) {
         lastShot = p;
-        playersField.setCell(p, status);
+        playersField.setCellStatus(p, status);
         maxSizedShip = maxSize;
 
 
@@ -34,7 +34,7 @@ class AIModule {
         }
         if (ship != null && ship.isSank()) {
             for (int i = 0; i < ship.getPointsAround().length; i++) {
-                playersField.setCell(ship.getPointsAround()[i], GameField.CellStatus.EMPTYSHOT);
+                playersField.setCellStatus(ship.getPointsAround()[i], GameField.CellStatus.EMPTYSHOT);
             }
         }
     }
@@ -64,8 +64,8 @@ class AIModule {
         }
 
         if (saveOfSuccessfulLastShot != null && //determine the orientation of the ship (horizontal or vertical)
-                playersField.getCell(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIPSHOT &&
-                playersField.getCell(lastShot) == GameField.CellStatus.SHIPSHOT
+                playersField.getCellStatus(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIPSHOT &&
+                playersField.getCellStatus(lastShot) == GameField.CellStatus.SHIPSHOT
                 && !lastShot.equals(saveOfSuccessfulLastShot)) {
 
             int dx = lastShot.getX() - saveOfSuccessfulLastShot.getX();
@@ -95,13 +95,13 @@ class AIModule {
             }
         }
 
-        if (playersField.getCell(lastShot) == GameField.CellStatus.SHIPSHOT) {//ship is shot
+        if (playersField.getCellStatus(lastShot) == GameField.CellStatus.SHIPSHOT) {//ship is shot
             saveOfSuccessfulLastShot = lastShot;
         }
 
         if (saveOfSuccessfulLastShot != null &&
-                playersField.getCell(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIPSHOT &&
-                playersField.getCell(lastShot) == GameField.CellStatus.EMPTYSHOT) {
+                playersField.getCellStatus(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIPSHOT &&
+                playersField.getCellStatus(lastShot) == GameField.CellStatus.EMPTYSHOT) {
             //our guess was wrong
             lastShot = saveOfSuccessfulLastShot;
         }
@@ -133,7 +133,7 @@ class AIModule {
 
     //for this methods saveOfSuccessfulLastShot is point for search to X or Y Line
     private Point horizontalWay() {
-        if (playersField.getCell(lastShot) == GameField.CellStatus.EMPTYSHOT) {
+        if (playersField.getCellStatus(lastShot) == GameField.CellStatus.EMPTYSHOT) {
             weGoingTop = false;
         }
 
@@ -152,7 +152,7 @@ class AIModule {
     }
 
     private Point verticalWay() {
-        if (playersField.getCell(lastShot) == GameField.CellStatus.EMPTYSHOT) {
+        if (playersField.getCellStatus(lastShot) == GameField.CellStatus.EMPTYSHOT) {
             weGoingTop = false;
         }
 
@@ -173,7 +173,7 @@ class AIModule {
     private boolean isCellEmpty(Point p) {
         return p != null && p.getX() >= 0 && p.getX() <= 9
                 && p.getY() >= 0 && p.getY() <= 9
-                && playersField.getCell(p) == GameField.CellStatus.EMPTY;
+                && playersField.getCellStatus(p) == GameField.CellStatus.EMPTY;
     }
 
 
@@ -190,7 +190,7 @@ class AIModule {
         HashSet<Point> ret = new HashSet<>();
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                if (playersField.getCell(new Point(j, i)) == GameField.CellStatus.EMPTY) {
+                if (playersField.getCellStatus(new Point(j, i)) == GameField.CellStatus.EMPTY) {
                     ret.addAll(pointsForGivenPoint(new Point(j, i),tempField));
                 }
             }

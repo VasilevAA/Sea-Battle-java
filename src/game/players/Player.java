@@ -1,6 +1,6 @@
-package game.player;
+package game.players;
 
-import game.elements.GameField;
+import game.elements.fields.GameField;
 import game.elements.Point;
 import game.elements.Ship;
 
@@ -22,7 +22,7 @@ public abstract class Player {
     public abstract Point makeShot();
 
     public GameField.CellStatus getCellStatus(Point point) {
-        return field.getCell(point);
+        return field.getCellStatus(point);
     }
 
     public GameField getField() {
@@ -30,7 +30,7 @@ public abstract class Player {
     }
 
     public Ship setCellStatus(Point point, GameField.CellStatus status) {
-        field.setCell(point, status);
+        field.setCellStatus(point, status);
         if (status == GameField.CellStatus.SHIPSHOT) {
             Ship temp = field.getShip(point);
             temp.hitShip();
@@ -50,7 +50,7 @@ public abstract class Player {
     public abstract GameField generateField();
 
     public void printField() {
-        System.out.println("player " + name + " field:");
+        System.out.println("players " + name + " field:");
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 char c = (getCellStatus(new Point(j, i)) == GameField.CellStatus.EMPTYSHOT) ? 'o' :
@@ -65,15 +65,12 @@ public abstract class Player {
     }
 
     public boolean allShipsDead() {
-        int count = 0;
-        for (int i = 0; i < field.getCells().length; i++) {
-            for (int j = 0; j < field.getCells()[i].length; j++) {
-                if (field.getCells()[i][j] == GameField.CellStatus.SHIPSHOT) {
-                    count++;
-                }
+        for (Ship sh : field.getShips()) {
+            if (!sh.isSank()) {
+                return false;
             }
         }
-        return count == 20;
+        return true;
     }
 
     public int shipsAlive() {
@@ -86,19 +83,20 @@ public abstract class Player {
         return ret;
     }
 
-    public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship,int maxSize){}
+    public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship, int maxSize) {
+    }
 
-    public int maxSizeOfAlivesShips(){
+    public int maxSizeOfAlivesShips() {
         int max = 1;
 
         for (int i = 0; i < field.getShips().length; i++) {
-            if(!field.getShips()[i].isSank() &&  field.getShips()[i].getSize() > max){
+            if (!field.getShips()[i].isSank() && field.getShips()[i].getSize() > max) {
                 max = field.getShips()[i].getSize();
             }
         }
         System.out.println(max);
 
-        return  max;
+        return max;
     }
 }
 

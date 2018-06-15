@@ -1,8 +1,8 @@
-package game.player.human;
+package game.players.human;
 
-import game.elements.GameField;
+import game.elements.fields.GameField;
 import game.elements.Point;
-import game.player.Player;
+import game.players.Player;
 
 public class HumanPlayer extends Player {
 

@@ -1,9 +1,9 @@
-package game.player.computer;
+package game.players.computer;
 
-import game.elements.GameField;
+import game.elements.fields.GameField;
 import game.elements.Point;
 import game.elements.Ship;
-import game.player.Player;
+import game.players.Player;
 
 public class ComputerPlayer extends Player {
 

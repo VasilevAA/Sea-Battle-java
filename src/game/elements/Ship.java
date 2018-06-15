@@ -1,5 +1,7 @@
 package game.elements;
 
+import game.elements.fields.GameField;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -45,7 +47,7 @@ public class Ship {
         return size;
     }
 
-    boolean contains(Point p) {
+    public boolean contains(Point p) {
         for (Point point : points) {
             if (p.equals(point)) {
                 return true;
@@ -87,11 +89,11 @@ public class Ship {
         Point firstPoint;
         do {
             firstPoint = new Point(new Random().nextInt(10), new Random().nextInt(10));
-            shipDirection = getCorrectPositionForShip(firstPoint, size,new Random().nextInt(4)+1);
+            shipDirection = getCorrectDirectionForShip(firstPoint, size,new Random().nextInt(4)+1);
         }
         while (shipDirection == 0);
 
-        placeShipCorrectly(firstPoint, ship, shipDirection);
+        generatePointsForShip(firstPoint, ship, shipDirection);
 
     }
 
@@ -104,7 +106,7 @@ public class Ship {
     }
 
 
-    private static int getCorrectPositionForShip(Point firstPoint, int size, int direction) {
+    private static int getCorrectDirectionForShip(Point firstPoint, int size, int direction) {
         boolean t = true;
 
         for (int i = 0; i < size; i++) {
@@ -155,7 +157,7 @@ public class Ship {
         return t ? direction : 0;
     }
 
-    public static void placeShipCorrectly(Point firstPoint, Ship ship, int shipDirection) {
+    public static void generatePointsForShip(Point firstPoint, Ship ship, int shipDirection) {
 
         Point[] shipPoints = new Point[ship.getSize()];
         Point[] pointsAroundShip;

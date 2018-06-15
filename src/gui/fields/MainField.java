@@ -1,10 +1,11 @@
 package gui.fields;
 
 import game.Game;
-import game.elements.GameField;
+import game.elements.fields.GameField;
 import game.elements.Point;
 import game.elements.Ship;
-import game.player.Player;
+import game.players.Player;
+import gui.elements.ShipItem;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -16,7 +17,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -41,7 +41,7 @@ public class MainField extends Stage {
         this.game = game;
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
-        getIcons().add(new Image("resources/img/cursor.png"));
+        getIcons().add(new Image("resources/img/style/cursor.png"));
         setTitle("Battleship");
 
         HBox node = new HBox();
@@ -80,9 +80,9 @@ public class MainField extends Stage {
 
                 if (status == GameField.CellStatus.SHIPSHOT) {
                     if (game.getOpponent().getField().getShip(new Point(j, i)).isSank()) {
-                        opponentField[i][j].setStyle("-fx-background-color:transparent;-fx-background-image:url(resources/img/fire.gif);");
+                        opponentField[i][j].setStyle("-fx-background-color:transparent;-fx-background-image:url(resources/img/cell/fire.gif);");
                     } else {
-                        opponentField[i][j].setStyle("-fx-background-color:black;-fx-background-image:url(resources/img/fire.gif);");
+                        opponentField[i][j].setStyle("-fx-background-color:black;-fx-background-image:url(resources/img/cell/fire.gif);");
                     }
                     opponentField[i][j].setDisable(true);
                 } else if (status == GameField.CellStatus.EMPTYSHOT) {
@@ -93,9 +93,9 @@ public class MainField extends Stage {
                 status = game.getPlayer().getCellStatus(new Point(j, i));
 
                 if (status == GameField.CellStatus.SHIPSHOT) {
-                    playerField[i][j].setStyle("-fx-background-image:url(resources/img/fire.gif);");
+                    playerField[i][j].setStyle("-fx-background-image:url(resources/img/cell/fire.gif);");
                 } else if (status == GameField.CellStatus.EMPTYSHOT) {
-                    playerField[i][j].setStyle("-fx-background-image:url(resources/img/empty.png);");
+                    playerField[i][j].setStyle("-fx-background-color: rgba(255,255,255,0.5);");
                 }
             }
         }
@@ -162,7 +162,7 @@ public class MainField extends Stage {
         vb.getStylesheets().add("resources/styles/PlayerField.css");
 
         GridPane grid = new GridPane();
-        Image ima = new Image("resources/img/sea.png");
+        Image ima = new Image("resources/img/style/sea.gif");
         grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 
         drawShip(grid,game.getPlayer());
@@ -189,9 +189,9 @@ public class MainField extends Stage {
         lb1.setAlignment(Pos.CENTER);
 
         GridPane grid = new GridPane();
-        Image ima = new Image("resources/img/sea.png");
+        Image ima = new Image("resources/img/style/sea.gif");
         grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
-        Image im = new Image("resources/img/cursor.png");
+        Image im = new Image("resources/img/style/cursor.png");
 
         drawShip(grid,game.getOpponent());
         for (int i = 0; i < 10; i++) {
@@ -230,28 +230,20 @@ public class MainField extends Stage {
         Ship[] ships = player.getField().getShips();
 
         for (Ship shep : ships) {
-            int tempSize = shep.getSize();
-            int orientation = shep.getOrientation();
-            Point[] points = shep.getPoints();
-            for (int k = 0; k < tempSize; k++) {
-                ImageView vi = new ImageView("resources/img/ships/size" + tempSize + "/" + String.valueOf(k + 1) + ".png");
-                switch (orientation) {
-                    case 1:
-                        grid.add(vi, points[k].getX(), points[k].getY());
-                        break;
-                    case 2:
-                        vi.setRotate(90);
-                        grid.add(vi, points[k].getX(), points[k].getY());
-                        break;
-                    case 3:
-                        vi.setRotate(180);
-                        grid.add(vi, points[k].getX(), points[k].getY());
-                        break;
-                    case 4:
-                        vi.setRotate(270);
-                        grid.add(vi, points[k].getX(), points[k].getY());
-                }
+            int size = shep.getSize();
+            int direction = shep.getOrientation();
+            ShipItem it = new ShipItem("resources/img/ships/" + size + ".png", (direction== 1 || direction==3 )? 1 : 2, size);
+            if(it.getDirection() ==2){
+                it.rotate();
+                it.setDirection(2);
             }
+            Point one = shep.getPoints()[0];
+            Point two = shep.getPoints()[shep.getPoints().length-1];
+
+            Point fin =  new Point(one.getX() < two.getX() ? one.getX() : two.getX(),
+                    one.getY() < two.getY() ? one.getY() : two.getY());
+
+            grid.add(it, fin.getX(), fin.getY(), it.getDirection() == 1 ? size : 1, it.getDirection() == 2 ? size : 1);
         }
     }
 

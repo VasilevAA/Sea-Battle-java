@@ -1,10 +1,11 @@
 package gui.menus;
 
 import game.Game;
-import game.elements.GameField;
+import game.elements.fields.GameField;
 import game.elements.Point;
-import game.player.computer.ComputerPlayer;
-import game.player.human.HumanPlayer;
+import game.players.computer.ComputerPlayer;
+import game.players.human.HumanPlayer;
+import gui.fields.FieldCreator;
 import gui.fields.MainField;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,7 +28,7 @@ public class MainMenu {
         VBox vb = new VBox(10);
         vb.setPadding(new Insets(10));
         vb.setAlignment(Pos.CENTER);
-        primaryStage.getIcons().add(new Image("resources/img/cursor.png"));
+        primaryStage.getIcons().add(new Image("resources/img/style/cursor.png"));
 
         Scene scene = new Scene(vb);
         scene.getStylesheets().setAll("resources/styles/modena.css");

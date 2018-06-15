@@ -1,67 +1,49 @@
-package gui.menus;
+package gui.fields;
 
-import game.elements.GameField;
+import game.elements.fields.GameField;
+import game.elements.fields.GameFieldForCreator;
 import game.elements.Point;
 import game.elements.Ship;
-import game.player.Player;
+import game.players.Player;
+import gui.elements.ShipItem;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.Iterator;
 
-class FieldCreator extends Stage {
+public class FieldCreator extends Stage {
 
-    private GameField field;
+    private GameFieldForCreator field;
     private Player player;
-    private Button[][] playerField = new Button[10][10];
 
+    private Button[][] playerField = new Button[10][10];
     private FlowPane pane = null;
+
     private GridPane grid = null;
 
 
-    class ShipItem extends ImageView {
-        private int direction;
-        private int size;
-
-        int getDirection() {
-            return direction;
-        }
-
-        int getSize() {
-            return size;
-        }
-
-        void setDirection(int direction) {
-            this.direction = direction;
-        }
-
-        ShipItem(String name, int direction, int size) {
-            super(name);
-            this.direction = direction;
-            this.size = size;
-
-        }
-    }
-
-    FieldCreator(Player player) {
-        field = new GameField();
+    public FieldCreator(Player player) {
+        field = new GameFieldForCreator();
         this.player = player;
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
-        getIcons().add(new Image("resources/img/cursor.png"));
+        getIcons().add(new Image("resources/img/style/cursor.png"));
         setTitle(player.name() + "'s field setup");
 
 
@@ -73,14 +55,14 @@ class FieldCreator extends Stage {
         setScene(scene);
 
 //        label that, ship placement was canceled (need in main menu)
-        setOnCloseRequest(event -> player.getField().setCell(new Point(0, 0), GameField.CellStatus.SHIPSHOT));
+        setOnCloseRequest(event -> player.getField().setCellStatus(new Point(0, 0), GameField.CellStatus.SHIPSHOT));
 
     }
 
     private GridPane setUpPlayerField() {
         grid = new GridPane();
         grid.getStylesheets().add("resources/styles/PlayerField.css");
-        Image ima = new Image("resources/img/sea.png");
+        Image ima = new Image("resources/img/style/sea.gif");
         grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 
         for (int i = 0; i < 10; i++) {
@@ -107,18 +89,20 @@ class FieldCreator extends Stage {
     private void setUpDragingInCell(Button cell) {
         cell.setOnDragOver((DragEvent event) -> {
             String id = event.getDragboard().getString();
-            ShipItem shipItem = pane.lookup("#" + id) != null
+            ShipItem itemInPane = pane.lookup("#" + id) != null
                     ? (ShipItem) pane.lookup("#" + id)
                     : (ShipItem) grid.lookup("#" + id);
 
-            int direction = shipItem.getDirection();
-            int size = shipItem.getSize();
+            if (itemInPane != null) {
+                int direction = itemInPane.getDirection();
+                int size = itemInPane.getSize();
 
-            int x = GridPane.getColumnIndex(cell);
-            int y = GridPane.getRowIndex(cell);
+                int x = GridPane.getColumnIndex(cell);
+                int y = GridPane.getRowIndex(cell);
 
-            if (event.getDragboard().hasString() && field.isPlaceCorrectForShip(new Point(x, y), size, direction)) {
-                event.acceptTransferModes(TransferMode.MOVE);
+                if (event.getDragboard().hasString() && field.isPlaceCorrectForShip(new Point(x, y), size, direction)) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
             }
             event.consume();
         });
@@ -139,9 +123,9 @@ class FieldCreator extends Stage {
 
                 Ship ship = new Ship(size);
                 Ship.clearField();
-                Ship.placeShipCorrectly(new Point(j, i), ship, direction);
+                Ship.generatePointsForShip(new Point(j, i), ship, direction);
 
-                field.placeShip(ship);
+                field.placeTempShip(ship);
 
                 grid.add(itemInPane, j, i, direction == 1 ? size : 1, direction == 2 ? size : 1);
                 pane.getChildren().remove(itemInPane);
@@ -154,13 +138,13 @@ class FieldCreator extends Stage {
                 int x = GridPane.getColumnIndex(itemInGrid);
                 int y = GridPane.getRowIndex(itemInGrid);
 
-                field.removeShip(new Point(x, y));
+                field.removeTempShip(new Point(x, y));
 
                 Ship ship = new Ship(size);
                 Ship.clearField();
-                Ship.placeShipCorrectly(new Point(j, i), ship, direction);
+                Ship.generatePointsForShip(new Point(j, i), ship, direction);
 
-                field.placeShip(ship);
+                field.placeTempShip(ship);
 
                 grid.getChildren().remove(itemInGrid);
                 grid.add(itemInGrid, j, i, direction == 1 ? size : 1, direction == 2 ? size : 1);
@@ -175,10 +159,10 @@ class FieldCreator extends Stage {
 
     private VBox setUpRightPart() {
         VBox vb = new VBox();
-        vb.setPrefWidth(400);
+//        vb.setPrefWidth(400);
 
         pane = new FlowPane();
-        pane.setMinHeight(230);
+        pane.setMinHeight(210);
         pane.setAlignment(Pos.CENTER);
         pane.setHgap(10);
         pane.setVgap(10);
@@ -188,6 +172,10 @@ class FieldCreator extends Stage {
                 size--;
             }
             ShipItem imv = makeShipItem(i, size);
+            Tooltip tip = new Tooltip("Right click to rotate");
+            tip.setShowDelay(new Duration(1000));
+            Tooltip.install(imv, tip);
+
             pane.getChildren().add(imv);
         }
 
@@ -202,7 +190,7 @@ class FieldCreator extends Stage {
                     int y = GridPane.getRowIndex(temp);
 
                     grid.getChildren().remove(temp);
-                    field.removeShip(new Point(x, y));
+                    field.removeTempShip(new Point(x, y));
 
                     pane.getChildren().add(temp);
                 }
@@ -223,7 +211,10 @@ class FieldCreator extends Stage {
         Button generateRandom = new Button("Random");
         generateRandom.setOnAction(event -> {
             clearPlayerField();
-            field.placeShips(Ship.getRandomlyPlacedShips());
+            for (Ship ship : Ship.getRandomlyPlacedShips()) {
+                field.placeTempShip(ship);
+            }
+            drawShips();
             updatePlayerField();
         });
 
@@ -235,7 +226,7 @@ class FieldCreator extends Stage {
         });
 
         Label lab = new Label();
-        lab.setMinWidth(140);
+        lab.setMinWidth(145);
         lab.setAlignment(Pos.CENTER_RIGHT);
 
         Button ok = new Button("Start game");
@@ -251,65 +242,53 @@ class FieldCreator extends Stage {
 
         HBox hb = new HBox(generateRandom, clear, lab, ok);
         hb.setSpacing(10);
-        hb.setPadding(new Insets(10));
+        hb.setPadding(new Insets(5));
 
-        vb.getChildren().addAll(pane, new Separator(), hb);
+        Label label = new Label("Drag ships into the field. Right click on the ship to rotate it.");
+        label.setPadding(new Insets(5));
+        label.setAlignment(Pos.CENTER);
+
+
+        vb.getChildren().addAll(label, new Separator(), pane, new Separator(), hb);
 
 
         return vb;
     }
 
     private ShipItem makeShipItem(int index, int size) {
-        ShipItem shipItem = new ShipItem("resources/img/ships/size" + size + "/full.png", 1, size);
-        shipItem.setId(this.getClass().getSimpleName() + System.currentTimeMillis() + index);
-
-        shipItem.setOnDragDetected(event -> {
-            Dragboard db = shipItem.startDragAndDrop(TransferMode.MOVE);
-            db.setDragView(shipItem.getImage(), 14, 14);
-
-            ClipboardContent cont = new ClipboardContent();
-            cont.putString(shipItem.getId());
-            db.setContent(cont);
-            event.consume();
-        });
+        ShipItem shipItem = new ShipItem("resources/img/ships/" + size + ".png", 1, size);
+        shipItem.setId(this.getClass().getSimpleName() + size + index);
 
         shipItem.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
-                if(grid.lookup("#" + shipItem.getId()) != null){
-                    int direction = shipItem.getDirection() ==1 ? 2 : 1 ;
+                if (grid.lookup("#" + shipItem.getId()) != null) {
+                    int direction = shipItem.getDirection() == 1 ? 2 : 1;
 
                     int x = GridPane.getColumnIndex(shipItem);
                     int y = GridPane.getRowIndex(shipItem);
-                    Ship retShip = field.getShip(new Point(x,y));
-                    field.removeShip(new Point(x,y));
-                    if(field.isPlaceCorrectForShip(new Point(x, y), size, direction)){
+                    Ship retShip = field.getShip(new Point(x, y));
+                    field.removeTempShip(new Point(x, y));
+
+                    if (field.isPlaceCorrectForShip(new Point(x, y), size, direction)) {
                         Ship ship = new Ship(size);
                         Ship.clearField();
-                        Ship.placeShipCorrectly(new Point(x,y), ship, direction);
-                        field.placeShip(ship);
+                        Ship.generatePointsForShip(new Point(x, y), ship, direction);
+                        field.placeTempShip(ship);
 
                         grid.getChildren().remove(shipItem);
 
-                        shipItem.setRotate(90);
-                        Image nIm = shipItem.snapshot(new SnapshotParameters(), null);
-                        shipItem.setRotate(0);
-                        shipItem.setImage(nIm);
-                        shipItem.setDirection(shipItem.getDirection() == 1 ? 2 : 1);
+                        shipItem.rotate();
 
                         grid.add(shipItem, x, y, direction == 1 ? size : 1, direction == 2 ? size : 1);
 
                         updatePlayerField();
 
-                    } else{
-                        field.placeShip(retShip);
+                    } else {
+                        field.placeTempShip(retShip);
                     }
 
-                } else{
-                    shipItem.setRotate(90);
-                    Image nIm = shipItem.snapshot(new SnapshotParameters(), null);
-                    shipItem.setRotate(0);
-                    shipItem.setImage(nIm);
-                    shipItem.setDirection(shipItem.getDirection() == 1 ? 2 : 1);
+                } else {
+                    shipItem.rotate();
                 }
             }
 
@@ -318,73 +297,90 @@ class FieldCreator extends Stage {
         return shipItem;
     }
 
-    private void clearPlayerField(){
-        if(grid.getChildren() != null) {
-            Iterator<Node> i  = grid.getChildren().iterator();
-            while(i.hasNext()){
+    private void clearPlayerField() {
+        if (grid.getChildren() != null) {
+            Iterator<Node> i = grid.getChildren().iterator();
+            while (i.hasNext()) {
                 Node n = i.next();
 
-                if(n.getId() != null && n.getId().contains("FieldCreator")){
+                if (n.getId() != null && n.getId().contains("FieldCreator")) {
                     i.remove();
                     pane.getChildren().add(n);
+                    if (((ShipItem) n).getDirection() == 2) {
+                        ((ShipItem) n).rotate();
+                    }
+                }
+            }
+            i = pane.getChildren().iterator();
+            while (i.hasNext()) {
+                Node n = i.next();
+
+                if (n.getId() != null && n.getId().contains("FieldCreator")) {
+                    if (((ShipItem) n).getDirection() == 2) {
+                        ((ShipItem) n).rotate();
+                    }
                 }
             }
 
         }
-        field = new GameField();
+        field = new GameFieldForCreator();
     }
 
     private void updatePlayerField() {
-
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                field.setCell(new Point(j, i), GameField.CellStatus.EMPTY);
-                playerField[i][j].setStyle("-fx-background-color: transparent;");
-
-            }
-        }
-
-        if (field.getShips() != null) {
-            for (Ship ship : field.getShips()) {
-                for (int i = 0; i < ship.getPoints().length; i++) {
-                    field.setCell(ship.getPoints()[i], GameField.CellStatus.SHIP);
-                    playerField[ship.getPoints()[i].getY()][ship.getPoints()[i].getX()].setStyle("-fx-background-color: orange;");
-                }
-                for (int i = 0; i < ship.getPointsAround().length; i++) {
-                    field.setCell(ship.getPointsAround()[i], GameField.CellStatus.EMPTYSHOT);
-
+                GameField.CellStatus status = field.getCellStatus(new Point(j, i));
+                switch (status) {
+                    case EMPTY:
+                        playerField[i][j].setStyle("-fx-background-color: transparent;");
+                        break;
+                    case SHIP:
+                        playerField[i][j].setStyle("-fx-background-color: orange;");
+                        break;
+                    case EMPTYSHOT:
+                        playerField[i][j].setStyle("-fx-background-color: rgba(255,255,255,0.5);");
                 }
             }
         }
     }
 
 
-    void drawShips(){
-        Ship[] ships = player.getField().getShips();
+    private void drawShips() {
+        Ship[] ships = field.getShips();
+
 
         for (Ship shep : ships) {
-            int tempSize = shep.getSize();
-            int orientation = shep.getOrientation();
-            Point[] points = shep.getPoints();
-            for (int k = 0; k < tempSize; k++) {
-                ImageView vi = new ImageView("resources/img/ships/size" + tempSize + "/" + String.valueOf(k + 1) + ".png");
-                switch (orientation) {
-                    case 1:
-                        grid.add(vi, points[k].getX(), points[k].getY());
-                        break;
-                    case 2:
-                        vi.setRotate(90);
-                        grid.add(vi, points[k].getX(), points[k].getY());
-                        break;
-                    case 3:
-                        vi.setRotate(180);
-                        grid.add(vi, points[k].getX(), points[k].getY());
-                        break;
-                    case 4:
-                        vi.setRotate(270);
-                        grid.add(vi, points[k].getX(), points[k].getY());
+            int size = shep.getSize();
+            int direction = shep.getOrientation();
+
+
+            ShipItem it = null;
+
+
+            for (Node n : pane.getChildren()) {
+                if (n.getId() != null && n.getId().contains("FieldCreator" + size)) {
+                    it = (ShipItem) n;
                 }
             }
+
+            if (direction == 2 || direction == 4 && it.getDirection() == 1) {
+                assert it != null;
+                it.rotate();
+            }
+
+            if (it != null) {
+                Point one = shep.getPoints()[0];
+                Point two = shep.getPoints()[shep.getPoints().length - 1];
+
+                Point fin = new Point(one.getX() < two.getX() ? one.getX() : two.getX(),
+                        one.getY() < two.getY() ? one.getY() : two.getY());
+
+                grid.add(it, fin.getX(), fin.getY(), it.getDirection() == 1 ? size : 1, it.getDirection() == 2 ? size : 1);
+                pane.getChildren().remove(it);
+            }
         }
+
+
     }
 }
+
