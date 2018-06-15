@@ -1,7 +1,7 @@
 package game.elements.fields;
 
 import game.elements.Point;
-import game.elements.Ship;
+import game.elements.ships.Ship;
 
 import java.util.ArrayList;
 

@@ -2,7 +2,7 @@ package game.players;
 
 import game.elements.fields.GameField;
 import game.elements.Point;
-import game.elements.Ship;
+import game.elements.ships.Ship;
 
 public abstract class Player {
 

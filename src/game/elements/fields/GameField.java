@@ -1,7 +1,7 @@
 package game.elements.fields;
 
 import game.elements.Point;
-import game.elements.Ship;
+import game.elements.ships.Ship;
 
 /**
  * This class represent a gamefield - main container, which

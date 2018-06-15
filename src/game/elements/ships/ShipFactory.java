@@ -1,74 +1,28 @@
-package game.elements;
+package game.elements.ships;
 
+import game.elements.Point;
 import game.elements.fields.GameField;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Ship {
-
-    private Point[] points;
-
-    private Point[] pointsAround;
-
-    private int numberOfAlreadyShot = 0;
-
-    private int size;
-
-    private int orientation;
-
-    public int getOrientation() {
-        return orientation;
-    }
-
-    public Ship(int size) {
-        this.size = size;
-        points = new Point[size];
-    }
-
-    public Point[] getPointsAround() {
-        return pointsAround;
-    }
-
-    private void setPointsAround(Point[] pointsAround) {
-        this.pointsAround = pointsAround;
-    }
-
-    private void setPoints(Point[] points) {
-        this.points = points;
-    }
-
-    public Point[] getPoints() {
-        return points;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public boolean contains(Point p) {
-        for (Point point : points) {
-            if (p.equals(point)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isSank() {
-        return numberOfAlreadyShot == size;
-    }
-
-    public void hitShip() {
-        numberOfAlreadyShot++;
-    }
+/**
+ * Class for producing randomly placed ships
+ * <p>
+ * Also class provide methods for filling ship's points and surroundings points.
+ */
 
 
+public class ShipFactory {
+
+    //temporary set of ships
     private static Ship[] tempShips = new Ship[10];
-    private static GameField.CellStatus[][] tempField = new GameField.CellStatus[10][10] ;
 
+    //temporary field
+    private static GameField.CellStatus[][] tempField = new GameField.CellStatus[10][10];
 
+    //Returns full set of correctly placed ships, that placed randomly on the field
     public static Ship[] getRandomlyPlacedShips() {
         clearField();
 
@@ -77,27 +31,29 @@ public class Ship {
                 size--;
             }
             tempShips[i] = new Ship(size);
-            placeShip(tempShips[i], size);
+            placeShip(tempShips[i]);
         }
 
         return tempShips.clone();
     }
 
-    private static void placeShip(Ship ship, int size) {
+    //place ship with given size
+    private static void placeShip(Ship ship) {
 
         int shipDirection; //1 - right, 2 - bot, 3 - left, 4 - top
         Point firstPoint;
         do {
             firstPoint = new Point(new Random().nextInt(10), new Random().nextInt(10));
-            shipDirection = getCorrectDirectionForShip(firstPoint, size,new Random().nextInt(4)+1);
+            shipDirection = getCorrectDirectionForShip(firstPoint, ship.getSize(), new Random().nextInt(4) + 1);
         }
         while (shipDirection == 0);
 
-        generatePointsForShip(firstPoint, ship, shipDirection);
+        calculatePointsForShip(firstPoint, ship, shipDirection);
 
     }
 
-    public static void clearField(){
+    //clear field from the ships
+    public static void clearField() {
         for (int i = 0; i < tempField.length; i++) {
             for (int j = 0; j < tempField.length; j++) {
                 tempField[i][j] = GameField.CellStatus.EMPTY;
@@ -105,7 +61,8 @@ public class Ship {
         }
     }
 
-
+    //Determine is ship can be placed in the firstPoint
+    //Return 0 if not, otherwise - direction
     private static int getCorrectDirectionForShip(Point firstPoint, int size, int direction) {
         boolean t = true;
 
@@ -157,7 +114,9 @@ public class Ship {
         return t ? direction : 0;
     }
 
-    public static void generatePointsForShip(Point firstPoint, Ship ship, int shipDirection) {
+    //Calculating correct points for a given ship,
+    // from given point with given direction
+    public static void calculatePointsForShip(Point firstPoint, Ship ship, int shipDirection) {
 
         Point[] shipPoints = new Point[ship.getSize()];
         Point[] pointsAroundShip;
@@ -183,19 +142,20 @@ public class Ship {
             shipPoints[i] = point;
         }
 
-        pointsAroundShip = getPointsAroundShip(shipPoints);
+        ship.setPoints(shipPoints);
+        pointsAroundShip = getPointsAroundShip(ship);
+        ship.setPointsAround(pointsAroundShip);
+        ship.setOrientation(shipDirection);
 
         for (Point aPointsAroundShip : pointsAroundShip) {
             tempField[aPointsAroundShip.getY()][aPointsAroundShip.getX()] = GameField.CellStatus.EMPTYSHOT;
         }
-        ship.setPoints(shipPoints);
-        ship.setPointsAround(pointsAroundShip);
-        ship.orientation = shipDirection;
     }
 
-    private static Point[] getPointsAroundShip(Point[] points) {
+    //return correct surrounding point
+    private static Point[] getPointsAroundShip(Ship ship) {
         List<Point> p = new ArrayList<>();
-        for (Point point : points) {
+        for (Point point : ship.getPoints()) {
             p.addAll(pointsAroundPoint(point));
         }
         Point[] retPoints = new Point[p.size()];
@@ -204,6 +164,7 @@ public class Ship {
         return retPoints;
     }
 
+    //calculate free points around given point
     private static List<Point> pointsAroundPoint(Point point) {
         List<Point> temp = new ArrayList<>();
 

@@ -3,7 +3,7 @@ package gui.fields;
 import game.Game;
 import game.elements.fields.GameField;
 import game.elements.Point;
-import game.elements.Ship;
+import game.elements.ships.Ship;
 import game.players.Player;
 import gui.elements.ShipItem;
 import javafx.concurrent.Task;

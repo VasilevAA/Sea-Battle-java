@@ -3,7 +3,8 @@ package gui.fields;
 import game.elements.fields.GameField;
 import game.elements.fields.GameFieldForCreator;
 import game.elements.Point;
-import game.elements.Ship;
+import game.elements.ships.Ship;
+import game.elements.ships.ShipFactory;
 import game.players.Player;
 import gui.elements.ShipItem;
 import javafx.geometry.Insets;
@@ -122,8 +123,8 @@ public class FieldCreator extends Stage {
                 int size = itemInPane.getSize();
 
                 Ship ship = new Ship(size);
-                Ship.clearField();
-                Ship.generatePointsForShip(new Point(j, i), ship, direction);
+                ShipFactory.clearField();
+                ShipFactory.calculatePointsForShip(new Point(j, i), ship, direction);
 
                 field.placeTempShip(ship);
 
@@ -141,8 +142,8 @@ public class FieldCreator extends Stage {
                 field.removeTempShip(new Point(x, y));
 
                 Ship ship = new Ship(size);
-                Ship.clearField();
-                Ship.generatePointsForShip(new Point(j, i), ship, direction);
+                ShipFactory.clearField();
+                ShipFactory.calculatePointsForShip(new Point(j, i), ship, direction);
 
                 field.placeTempShip(ship);
 
@@ -211,7 +212,7 @@ public class FieldCreator extends Stage {
         Button generateRandom = new Button("Random");
         generateRandom.setOnAction(event -> {
             clearPlayerField();
-            for (Ship ship : Ship.getRandomlyPlacedShips()) {
+            for (Ship ship : ShipFactory.getRandomlyPlacedShips()) {
                 field.placeTempShip(ship);
             }
             drawShips();
@@ -271,8 +272,8 @@ public class FieldCreator extends Stage {
 
                     if (field.isPlaceCorrectForShip(new Point(x, y), size, direction)) {
                         Ship ship = new Ship(size);
-                        Ship.clearField();
-                        Ship.generatePointsForShip(new Point(x, y), ship, direction);
+                        ShipFactory.clearField();
+                        ShipFactory.calculatePointsForShip(new Point(x, y), ship, direction);
                         field.placeTempShip(ship);
 
                         grid.getChildren().remove(shipItem);

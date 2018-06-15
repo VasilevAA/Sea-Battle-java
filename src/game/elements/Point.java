@@ -1,5 +1,8 @@
 package game.elements;
 
+/**
+ * Simple class for point with integer coordinates
+ */
 public class Point {
     private int x;
     private int y;
@@ -22,8 +25,4 @@ public class Point {
         return (((Point) obj).getX() == x) && (((Point) obj).getY() == y);
     }
 
-    @Override
-    public String toString() {
-        return "(" + x + ", " + y + ")";
-    }
 }
