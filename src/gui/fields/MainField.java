@@ -21,6 +21,10 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * Class provides window with main menu
+ */
+
 public class MainField extends Stage {
 
     private Button[][] opponentField = new Button[10][10];

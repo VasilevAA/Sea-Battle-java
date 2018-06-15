@@ -8,8 +8,16 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 
+/**
+ * Class container for ship image
+ */
+
 public class ShipItem extends ImageView {
+
+    //image direction
     private int direction;
+
+    //size of item (1-4)
     private int size;
 
     public int getDirection() {
@@ -41,6 +49,7 @@ public class ShipItem extends ImageView {
         });
     }
 
+    //rotate item on 90 degree clockwise
     public void rotate() {
         setRotate(90);
         SnapshotParameters par = new SnapshotParameters();

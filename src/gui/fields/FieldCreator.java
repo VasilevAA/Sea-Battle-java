@@ -28,16 +28,21 @@ import javafx.util.Duration;
 
 import java.util.Iterator;
 
+/**
+ * Class provides window with interface to create
+ * user's field with user's placement of ships.
+ * Also user can place ships randomly.
+ */
+
 public class FieldCreator extends Stage {
 
     private GameFieldForCreator field;
     private Player player;
 
     private Button[][] playerField = new Button[10][10];
+
     private FlowPane pane = null;
-
     private GridPane grid = null;
-
 
     public FieldCreator(Player player) {
         field = new GameFieldForCreator();

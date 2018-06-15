@@ -5,6 +5,10 @@ import game.elements.Point;
 import game.elements.ships.Ship;
 import game.players.Player;
 
+/**
+ * Controller between gui and game elements
+ */
+
 public class Game {
 
     private Player player; // It's you
@@ -43,7 +47,6 @@ public class Game {
         return null;
     }
 
-    // TODO: 07.06.2018 maybe we need hierarchy of game classes: human game and computer
     public Point receiveShotFromOpponent() {
 
         Point point = opponent.makeShot();
