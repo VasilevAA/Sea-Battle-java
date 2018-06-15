@@ -6,40 +6,47 @@ import game.elements.ships.Ship;
 
 import java.util.*;
 
+/**
+ * Module for computer player - decide next correct shot
+ * Shot ship to the death and analyze empty cells
+ */
+
 class AIModule {
+
+    //Copy of already known player field (not information about ships, only about shots)
     private GameField playersField = new GameField();
 
-    private Point lastShot;
-    private Point saveOfSuccessfulLastShot = null;
-    private Ship currentShip = null;
+    private Point lastShot; //shot from last turn
+    private Point saveOfSuccessfulLastShot = null; //if shot was successful - save it
+    private Ship currentShip = null; //current ship, we trying to kill
 
     private boolean onXLine = false; //what direction we going
     private boolean onYLine = false;
 
-    private Point start = null;
+    private Point start = null; //start and end of ship
     private Point end = null;
 
     private boolean weGoingTop = true;
 
-    int maxSizedShip = 4;
+    private int maxSizedShip = 4; //current maximum ship of player
 
+    //set info about shot and ship (if it was shot)
     void setInformationAboutLastShot(Point p, GameField.CellStatus status, Ship ship, int maxSize) {
         lastShot = p;
         playersField.setCellStatus(p, status);
         maxSizedShip = maxSize;
-
 
         if (currentShip == null) {
             currentShip = ship;
         }
         if (ship != null && ship.isSank()) {
             for (int i = 0; i < ship.getPointsAround().length; i++) {
-                playersField.setCellStatus(ship.getPointsAround()[i], GameField.CellStatus.EMPTYSHOT);
+                playersField.setCellStatus(ship.getPointsAround()[i], GameField.CellStatus.EMPTY_SHOT);
             }
         }
     }
 
-
+    //determine next correct shot
     Point calculateCorrectShot() {
         if (currentShip == null || currentShip.isSank()) { //if ship is sank, or we dont have one
             currentShip = null;
@@ -49,23 +56,21 @@ class AIModule {
             onXLine = false;
             onYLine = false;
             weGoingTop = true;
-//            System.out.println(maxSizedShip);
 
             Point[] possibleRet = getExpectablePoints();
             int e = new Random().nextInt(possibleRet.length);
             return possibleRet[e];
-
         }
 
-        if (onYLine) {
+        if (onYLine) { //if we are already on the line
             return verticalWay();
         } else if (onXLine) {
             return horizontalWay();
         }
 
         if (saveOfSuccessfulLastShot != null && //determine the orientation of the ship (horizontal or vertical)
-                playersField.getCellStatus(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIPSHOT &&
-                playersField.getCellStatus(lastShot) == GameField.CellStatus.SHIPSHOT
+                playersField.getCellStatus(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIP_SHOT &&
+                playersField.getCellStatus(lastShot) == GameField.CellStatus.SHIP_SHOT
                 && !lastShot.equals(saveOfSuccessfulLastShot)) {
 
             int dx = lastShot.getX() - saveOfSuccessfulLastShot.getX();
@@ -95,13 +100,13 @@ class AIModule {
             }
         }
 
-        if (playersField.getCellStatus(lastShot) == GameField.CellStatus.SHIPSHOT) {//ship is shot
+        if (playersField.getCellStatus(lastShot) == GameField.CellStatus.SHIP_SHOT) {//ship is shot
             saveOfSuccessfulLastShot = lastShot;
         }
 
         if (saveOfSuccessfulLastShot != null &&
-                playersField.getCellStatus(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIPSHOT &&
-                playersField.getCellStatus(lastShot) == GameField.CellStatus.EMPTYSHOT) {
+                playersField.getCellStatus(saveOfSuccessfulLastShot) == GameField.CellStatus.SHIP_SHOT &&
+                playersField.getCellStatus(lastShot) == GameField.CellStatus.EMPTY_SHOT) {
             //our guess was wrong
             lastShot = saveOfSuccessfulLastShot;
         }
@@ -109,6 +114,7 @@ class AIModule {
         return getStartingDirection();
     }
 
+    //shot for determine direction of ship (shooting around first shot point)
     private Point getStartingDirection() {
         Point p = null;
         do {
@@ -126,25 +132,25 @@ class AIModule {
                 case 3:
                     p = new Point(lastShot.getX(), lastShot.getY() - 1);
             }
-        } while (!isCellEmpty(p));
+        } while (!isCellCorrectForShot(p));
 
         return p;
     }
 
     //for this methods saveOfSuccessfulLastShot is point for search to X or Y Line
     private Point horizontalWay() {
-        if (playersField.getCellStatus(lastShot) == GameField.CellStatus.EMPTYSHOT) {
+        if (playersField.getCellStatus(lastShot) == GameField.CellStatus.EMPTY_SHOT) {
             weGoingTop = false;
         }
 
-        if (isCellEmpty(new Point(end.getX() + 1, end.getY())) && weGoingTop) {
+        if (isCellCorrectForShot(new Point(end.getX() + 1, end.getY())) && weGoingTop) {
             end = new Point(end.getX() + 1, end.getY());
             return end;
         } else {
             weGoingTop = false;
         }
 
-        if (isCellEmpty(new Point(start.getX() - 1, start.getY()))) {
+        if (isCellCorrectForShot(new Point(start.getX() - 1, start.getY()))) {
             start = new Point(start.getX() - 1, start.getY());
             return start;
         }
@@ -152,38 +158,38 @@ class AIModule {
     }
 
     private Point verticalWay() {
-        if (playersField.getCellStatus(lastShot) == GameField.CellStatus.EMPTYSHOT) {
+        if (playersField.getCellStatus(lastShot) == GameField.CellStatus.EMPTY_SHOT) {
             weGoingTop = false;
         }
 
-        if (isCellEmpty(new Point(end.getX(), end.getY() + 1)) && weGoingTop) {
+        if (isCellCorrectForShot(new Point(end.getX(), end.getY() + 1)) && weGoingTop) {
             end = new Point(end.getX(), end.getY() + 1);
             return end;
         } else {
             weGoingTop = false;
         }
 
-        if (isCellEmpty(new Point(start.getX(), start.getY() - 1))) {
+        if (isCellCorrectForShot(new Point(start.getX(), start.getY() - 1))) {
             start = new Point(start.getX(), start.getY() - 1);
             return start;
         }
         return null;
     }
 
-    private boolean isCellEmpty(Point p) {
+    private boolean isCellCorrectForShot(Point p) {
         return p != null && p.getX() >= 0 && p.getX() <= 9
                 && p.getY() >= 0 && p.getY() <= 9
                 && playersField.getCellStatus(p) == GameField.CellStatus.EMPTY;
     }
 
 
+    //returns only the points, that can fill current maximum ship of player
     private Point[] getExpectablePoints() {
 
-        Point[][] tempField = new Point[10 ][10];
+        Point[][] tempField = new Point[10][10];
         for (int i = 0; i < tempField.length; i++) {
             for (int j = 0; j < tempField.length; j++) {
-                tempField[i][j] = new Point(j,i);
-
+                tempField[i][j] = new Point(j, i);
             }
         }
 
@@ -191,52 +197,41 @@ class AIModule {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 if (playersField.getCellStatus(new Point(j, i)) == GameField.CellStatus.EMPTY) {
-                    ret.addAll(pointsForGivenPoint(new Point(j, i),tempField));
+                    ret.addAll(pointsForGivenPoint(new Point(j, i), tempField));
                 }
             }
         }
 
         Point[] retTrue = new Point[ret.size()];
-
         retTrue = ret.toArray(retTrue);
 
-
-
         return retTrue;
-
     }
 
     private HashSet<Point> pointsForGivenPoint(Point p, Point[][] tempField) {
-
-
-
-
         HashSet<Point> ret = new HashSet<>();
-
 
         boolean isRight = true;
         for (int i = 0; i < maxSizedShip; i++) {
-            if(!isCellEmpty(new Point(p.getX() + i, p.getY()))){
+            if (!isCellCorrectForShot(new Point(p.getX() + i, p.getY()))) {
                 isRight = false;
             }
         }
 
-        if(isRight){
-            for (int i = 0; i < maxSizedShip; i++) {
-                ret.add(tempField[p.getY()][p.getX()+i]);
-            }
+        if (isRight) {
+            ret.addAll(Arrays.asList(tempField[p.getY()]).subList(p.getX(), maxSizedShip + p.getX()));
         }
 
         isRight = true;
         for (int i = 0; i < maxSizedShip; i++) {
-            if(!isCellEmpty(new Point(p.getX(), p.getY()+i))){
+            if (!isCellCorrectForShot(new Point(p.getX(), p.getY() + i))) {
                 isRight = false;
             }
         }
 
-        if(isRight){
+        if (isRight) {
             for (int i = 0; i < maxSizedShip; i++) {
-                ret.add(tempField[p.getY()+i][p.getX()]);
+                ret.add(tempField[p.getY() + i][p.getX()]);
             }
         }
 

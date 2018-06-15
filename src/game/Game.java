@@ -28,14 +28,11 @@ public class Game {
     public void sendShotToOpponent(Point point) {
 
         if (opponent.getCellStatus(point) == GameField.CellStatus.EMPTY) {
-            opponent.setCellStatus(point, GameField.CellStatus.EMPTYSHOT);
+            opponent.setCellStatus(point, GameField.CellStatus.EMPTY_SHOT);
         } else {
-            opponent.setCellStatus(point, GameField.CellStatus.SHIPSHOT);
+            opponent.setCellStatus(point, GameField.CellStatus.SHIP_SHOT);
         }
-        player.setInfoAboutLastShot(point,opponent.getCellStatus(point),null,opponent.maxSizeOfAlivesShips());
-
-        opponent.printField();
-
+        player.setInfoAboutLastShot(point,opponent.getCellStatus(point),null,opponent.maxSizeOfAliveShips());
     }
 
     public Player getWinner() {
@@ -52,13 +49,12 @@ public class Game {
         Point point = opponent.makeShot();
         Ship tempShip;
         if (player.getCellStatus(point) == GameField.CellStatus.EMPTY) {
-            tempShip = player.setCellStatus(point, GameField.CellStatus.EMPTYSHOT);
+            tempShip = player.setCellStatus(point, GameField.CellStatus.EMPTY_SHOT);
         } else {
-            tempShip = player.setCellStatus(point, GameField.CellStatus.SHIPSHOT);
+            tempShip = player.setCellStatus(point, GameField.CellStatus.SHIP_SHOT);
         }
-        opponent.setInfoAboutLastShot(point, player.getCellStatus(point), tempShip,player.maxSizeOfAlivesShips());
+        opponent.setInfoAboutLastShot(point, player.getCellStatus(point), tempShip,player.maxSizeOfAliveShips());
 
-        player.printField();
         return point;
     }
 

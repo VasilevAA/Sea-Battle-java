@@ -13,27 +13,17 @@ public class ComputerPlayer extends Player {
 
     public ComputerPlayer(String name) {
         super(name);
+        getField().placeShips(ShipFactory.getRandomlyPlacedShips());
     }
 
     @Override
     public Point makeShot() {
-
         return ai.calculateCorrectShot();
     }
 
-    @Override
-    public GameField generateField() {
+    public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship, int maxSize) {
 
-        GameField field = new GameField();
-        field.placeShips(ShipFactory.getRandomlyPlacedShips());
-
-        return field;
-    }
-
-
-    public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship,int maxSize) {
-
-        ai.setInformationAboutLastShot(point, shot, ship,maxSize);
+        ai.setInformationAboutLastShot(point, shot, ship, maxSize);
     }
 
 }

@@ -13,7 +13,7 @@ public class GameField {
 
     //  States in which every cell can be
     public enum CellStatus {
-        EMPTYSHOT, EMPTY, SHIPSHOT, SHIP
+        EMPTY_SHOT, EMPTY, SHIP_SHOT, SHIP
     }
 
     //  Cells

@@ -2,7 +2,6 @@ package game.elements.fields;
 
 import game.elements.Point;
 import game.elements.ships.Ship;
-
 import java.util.ArrayList;
 
 
@@ -60,7 +59,7 @@ public class GameFieldForCreator extends GameField {
                 setCellStatus(point, CellStatus.SHIP);
             }
             for (Point point : ship.getPointsAround()) {
-                setCellStatus(point, CellStatus.EMPTYSHOT);
+                setCellStatus(point, CellStatus.EMPTY_SHOT);
             }
         }
     }

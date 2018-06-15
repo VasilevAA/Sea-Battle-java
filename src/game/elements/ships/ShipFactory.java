@@ -148,7 +148,7 @@ public class ShipFactory {
         ship.setOrientation(shipDirection);
 
         for (Point aPointsAroundShip : pointsAroundShip) {
-            tempField[aPointsAroundShip.getY()][aPointsAroundShip.getX()] = GameField.CellStatus.EMPTYSHOT;
+            tempField[aPointsAroundShip.getY()][aPointsAroundShip.getX()] = GameField.CellStatus.EMPTY_SHOT;
         }
     }
 

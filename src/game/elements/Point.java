@@ -25,4 +25,5 @@ public class Point {
         return (((Point) obj).getX() == x) && (((Point) obj).getY() == y);
     }
 
+
 }

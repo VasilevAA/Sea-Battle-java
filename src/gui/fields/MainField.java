@@ -78,23 +78,23 @@ public class MainField extends Stage {
             for (int j = 0; j < 10; j++) {
                 GameField.CellStatus status = game.getOpponent().getCellStatus(new Point(j, i));
 
-                if (status == GameField.CellStatus.SHIPSHOT) {
+                if (status == GameField.CellStatus.SHIP_SHOT) {
                     if (game.getOpponent().getField().getShip(new Point(j, i)).isSank()) {
                         opponentField[i][j].setStyle("-fx-background-color:transparent;-fx-background-image:url(resources/img/cell/fire.gif);");
                     } else {
                         opponentField[i][j].setStyle("-fx-background-color:black;-fx-background-image:url(resources/img/cell/fire.gif);");
                     }
                     opponentField[i][j].setDisable(true);
-                } else if (status == GameField.CellStatus.EMPTYSHOT) {
+                } else if (status == GameField.CellStatus.EMPTY_SHOT) {
                     opponentField[i][j].setStyle("-fx-background-color: transparent;");
                     opponentField[i][j].setDisable(true);
                 }
 
                 status = game.getPlayer().getCellStatus(new Point(j, i));
 
-                if (status == GameField.CellStatus.SHIPSHOT) {
+                if (status == GameField.CellStatus.SHIP_SHOT) {
                     playerField[i][j].setStyle("-fx-background-image:url(resources/img/cell/fire.gif);");
-                } else if (status == GameField.CellStatus.EMPTYSHOT) {
+                } else if (status == GameField.CellStatus.EMPTY_SHOT) {
                     playerField[i][j].setStyle("-fx-background-color: rgba(255,255,255,0.5);");
                 }
             }
@@ -130,7 +130,7 @@ public class MainField extends Stage {
 
             GameField.CellStatus status = game.getPlayer().getCellStatus(point);
 
-            if (status == GameField.CellStatus.SHIPSHOT) {
+            if (status == GameField.CellStatus.SHIP_SHOT) {
                 receiveShot();
             }
             statusBar.setText("Your Turn");
@@ -213,7 +213,7 @@ public class MainField extends Stage {
 
                     GameField.CellStatus status = this.game.getOpponent().getCellStatus(new Point(finalJ, finalI));
 
-                    if (status != GameField.CellStatus.SHIPSHOT) {
+                    if (status != GameField.CellStatus.SHIP_SHOT) {
                         receiveShot();
                     }
                 });

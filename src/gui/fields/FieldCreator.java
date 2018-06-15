@@ -56,7 +56,7 @@ public class FieldCreator extends Stage {
         setScene(scene);
 
 //        label that, ship placement was canceled (need in main menu)
-        setOnCloseRequest(event -> player.getField().setCellStatus(new Point(0, 0), GameField.CellStatus.SHIPSHOT));
+        setOnCloseRequest(event -> player.getField().setCellStatus(new Point(0, 0), GameField.CellStatus.SHIP_SHOT));
 
     }
 
@@ -338,7 +338,7 @@ public class FieldCreator extends Stage {
                     case SHIP:
                         playerField[i][j].setStyle("-fx-background-color: orange;");
                         break;
-                    case EMPTYSHOT:
+                    case EMPTY_SHOT:
                         playerField[i][j].setStyle("-fx-background-color: rgba(255,255,255,0.5);");
                 }
             }
