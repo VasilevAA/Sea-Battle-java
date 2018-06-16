@@ -4,8 +4,8 @@ package game.elements;
  * Simple class for point with integer coordinates
  */
 public class Point {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
     public Point(int x, int y) {
         this.x = x;
@@ -22,8 +22,21 @@ public class Point {
 
     @Override
     public boolean equals(Object obj) {
-        return (((Point) obj).getX() == x) && (((Point) obj).getY() == y);
+        if (obj instanceof Point) {
+            return ((Point) obj).getX() == x && ((Point) obj).getY() == y;
+        }
+        return false;
     }
 
+    @Override
+    public int hashCode() {
+        int result = Integer.hashCode(x);
+        result = 31 * result + Integer.hashCode(y);
+        return result;
+    }
 
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")";
+    }
 }

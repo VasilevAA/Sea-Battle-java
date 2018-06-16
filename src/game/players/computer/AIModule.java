@@ -47,19 +47,11 @@ class AIModule {
     }
 
     //determine next correct shot
+
+
     Point calculateCorrectShot() {
         if (currentShip == null || currentShip.isSank()) { //if ship is sank, or we dont have one
-            currentShip = null;
-            saveOfSuccessfulLastShot = null;
-            start = null;
-            end = null;
-            onXLine = false;
-            onYLine = false;
-            weGoingTop = true;
-
-            Point[] possibleRet = getExpectablePoints();
-            int e = new Random().nextInt(possibleRet.length);
-            return possibleRet[e];
+            return getRandomPoint();
         }
 
         if (onYLine) { //if we are already on the line
@@ -112,6 +104,20 @@ class AIModule {
         }
 
         return getStartingDirection();
+    }
+
+    private Point getRandomPoint() {
+        currentShip = null;
+        saveOfSuccessfulLastShot = null;
+        start = null;
+        end = null;
+        onXLine = false;
+        onYLine = false;
+        weGoingTop = true;
+
+        Point[] possibleRet = getExpectablePoints();
+        int e = new Random().nextInt(possibleRet.length);
+        return possibleRet[e];
     }
 
     //shot for determine direction of ship (shooting around first shot point)
@@ -183,7 +189,7 @@ class AIModule {
     }
 
 
-    //returns only the points, that can fill current maximum ship of player
+    //returns only the points, that can fill current maximum player's ship
     private Point[] getExpectablePoints() {
 
         Point[][] tempField = new Point[GameField.fieldSize][GameField.fieldSize];
@@ -215,6 +221,7 @@ class AIModule {
         for (int i = 0; i < maxSizedShip; i++) {
             if (!isCellCorrectForShot(new Point(p.getX() + i, p.getY()))) {
                 isRight = false;
+                break;
             }
         }
 
@@ -226,6 +233,7 @@ class AIModule {
         for (int i = 0; i < maxSizedShip; i++) {
             if (!isCellCorrectForShot(new Point(p.getX(), p.getY() + i))) {
                 isRight = false;
+                break;
             }
         }
 

@@ -127,9 +127,7 @@ public class FieldCreator extends Stage {
                 int direction = itemInPane.getDirection();
                 int size = itemInPane.getSize();
 
-                Ship ship = new Ship(size);
-                ShipFactory.clearField();
-                ShipFactory.calculatePointsForShip(new Point(j, i), ship, direction);
+                Ship ship = ShipFactory.createShip(new Point(j, i), size, direction);
 
                 field.placeTempShip(ship);
 
@@ -146,9 +144,7 @@ public class FieldCreator extends Stage {
 
                 field.removeTempShip(new Point(x, y));
 
-                Ship ship = new Ship(size);
-                ShipFactory.clearField();
-                ShipFactory.calculatePointsForShip(new Point(j, i), ship, direction);
+                Ship ship = ShipFactory.createShip(new Point(j, i), size, direction);
 
                 field.placeTempShip(ship);
 
@@ -156,7 +152,7 @@ public class FieldCreator extends Stage {
                 grid.add(itemInGrid, j, i, direction == 1 ? size : 1, direction == 2 ? size : 1);
             }
 
-            updatePlayerField();
+            updateFieldGraphic();
 
             event.setDropCompleted(true);
             event.consume();
@@ -168,7 +164,7 @@ public class FieldCreator extends Stage {
 //        vb.setPrefWidth(400);
 
         pane = new FlowPane();
-        pane.setMinHeight(210);
+        VBox.setVgrow(pane, Priority.ALWAYS);
         pane.setAlignment(Pos.CENTER);
         pane.setHgap(10);
         pane.setVgap(10);
@@ -201,7 +197,7 @@ public class FieldCreator extends Stage {
                     pane.getChildren().add(temp);
                 }
             }
-            updatePlayerField();
+            updateFieldGraphic();
             event.setDropCompleted(true);
             event.consume();
         });
@@ -221,14 +217,14 @@ public class FieldCreator extends Stage {
                 field.placeTempShip(ship);
             }
             drawShips();
-            updatePlayerField();
+            updateFieldGraphic();
         });
 
 
         Button clear = new Button("Clear Field");
         clear.setOnAction(event -> {
             clearPlayerField();
-            updatePlayerField();
+            updateFieldGraphic();
         });
 
         Label lab = new Label();
@@ -248,7 +244,7 @@ public class FieldCreator extends Stage {
 
         HBox hb = new HBox(generateRandom, clear, lab, ok);
         hb.setSpacing(10);
-        hb.setPadding(new Insets(5));
+        hb.setPadding(new Insets(8));
 
         Label label = new Label("Drag ships into the field. Right click on the ship to rotate it.");
         label.setPadding(new Insets(5));
@@ -276,9 +272,8 @@ public class FieldCreator extends Stage {
                     field.removeTempShip(new Point(x, y));
 
                     if (field.isPlaceCorrectForShip(new Point(x, y), size, direction)) {
-                        Ship ship = new Ship(size);
-                        ShipFactory.clearField();
-                        ShipFactory.calculatePointsForShip(new Point(x, y), ship, direction);
+                        Ship ship = ShipFactory.createShip(new Point(x, y), size, direction);
+
                         field.placeTempShip(ship);
 
                         grid.getChildren().remove(shipItem);
@@ -287,7 +282,7 @@ public class FieldCreator extends Stage {
 
                         grid.add(shipItem, x, y, direction == 1 ? size : 1, direction == 2 ? size : 1);
 
-                        updatePlayerField();
+                        updateFieldGraphic();
 
                     } else {
                         field.placeTempShip(retShip);
@@ -309,7 +304,7 @@ public class FieldCreator extends Stage {
             while (i.hasNext()) {
                 Node n = i.next();
 
-                if (n.getId() != null && n.getId().contains("FieldCreator")) {
+                if (n instanceof ShipItem) {
                     i.remove();
                     pane.getChildren().add(n);
                     if (((ShipItem) n).getDirection() == 2) {
@@ -321,7 +316,7 @@ public class FieldCreator extends Stage {
             while (i.hasNext()) {
                 Node n = i.next();
 
-                if (n.getId() != null && n.getId().contains("FieldCreator")) {
+                if (n instanceof ShipItem) {
                     if (((ShipItem) n).getDirection() == 2) {
                         ((ShipItem) n).rotate();
                     }
@@ -329,10 +324,10 @@ public class FieldCreator extends Stage {
             }
 
         }
-        field = new GameFieldForCreator();
+        field.resetTempField();
     }
 
-    private void updatePlayerField() {
+    private void updateFieldGraphic() {
         for (int i = 0; i < GameField.fieldSize; i++) {
             for (int j = 0; j < GameField.fieldSize; j++) {
                 GameField.CellStatus status = field.getCellStatus(new Point(j, i));
@@ -364,9 +359,10 @@ public class FieldCreator extends Stage {
 
 
             for (Node n : pane.getChildren()) {
-                if (n.getId() != null && n.getId().contains("FieldCreator" + size)) {
+                if (n instanceof ShipItem && n.getId().contains("FieldCreator" + size)) {
                     it = (ShipItem) n;
                 }
+
             }
 
             if (direction == 2 || direction == 4 && (it != null ? it.getDirection() : 0) == 1) {

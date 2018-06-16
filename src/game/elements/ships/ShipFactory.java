@@ -34,7 +34,15 @@ public class ShipFactory {
             placeShip(tempShips[i]);
         }
 
-        return tempShips.clone();
+        return tempShips;
+    }
+
+    //returns ship in a given position
+    public static Ship createShip(Point firstPoint, int size, int direction) {
+        Ship ship = new Ship(size);
+        clearField();
+        calculatePointsForShip(firstPoint, ship, direction);
+        return ship;
     }
 
     //place ship with given size
@@ -53,7 +61,7 @@ public class ShipFactory {
     }
 
     //clear field from the ships
-    public static void clearField() {
+    private static void clearField() {
         for (int i = 0; i < tempField.length; i++) {
             for (int j = 0; j < tempField.length; j++) {
                 tempField[i][j] = GameField.CellStatus.EMPTY;
@@ -116,7 +124,7 @@ public class ShipFactory {
 
     //Calculating correct points for a given ship,
     // from given point with given direction
-    public static void calculatePointsForShip(Point firstPoint, Ship ship, int shipDirection) {
+    private static void calculatePointsForShip(Point firstPoint, Ship ship, int shipDirection) {
 
         Point[] shipPoints = new Point[ship.getSize()];
         Point[] pointsAroundShip;

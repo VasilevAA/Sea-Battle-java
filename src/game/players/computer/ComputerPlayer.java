@@ -21,6 +21,7 @@ public class ComputerPlayer extends Player {
         return ai.calculateCorrectShot();
     }
 
+    @Override
     public void setInfoAboutLastShot(Point point, GameField.CellStatus shot, Ship ship, int maxSize) {
 
         ai.setInformationAboutLastShot(point, shot, ship, maxSize);

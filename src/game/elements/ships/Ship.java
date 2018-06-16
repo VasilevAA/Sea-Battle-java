@@ -31,7 +31,7 @@ public class Ship {
         return orientation;
     }
 
-    public Ship(int size) {
+    Ship(int size) {
         this.size = size;
         points = new Point[size];
     }

@@ -8,9 +8,10 @@ import game.elements.ships.Ship;
  * include cells and ships.
  * Also class is needed for creating user's field in GUI with FieldCreator
  */
+
 public class GameField {
 
-    public static final int fieldSize = 10;
+    public static final int fieldSize = 15;
 
     //  States in which every cell can be
     public enum CellStatus {
@@ -42,7 +43,6 @@ public class GameField {
     }
 
     public void setCellStatus(Point point, CellStatus status) {
-
         cells[point.getY()][point.getX()] = status;
     }
 
@@ -68,6 +68,24 @@ public class GameField {
     }
 
 
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < fieldSize; i++) {
+            for (int j = 0; j < fieldSize; j++) {
+                char c = cells[i][j] == CellStatus.EMPTY ?
+                        '_' :
+                        cells[i][j] == CellStatus.SHIP ?
+                                '#' :
+                                cells[i][j] == CellStatus.EMPTY_SHOT ?
+                                        'o' :
+                                        'X';
+                str.append(c).append(" ");
+            }
+            str.append('\n');
+        }
+        return str.toString();
+    }
 }
 
 

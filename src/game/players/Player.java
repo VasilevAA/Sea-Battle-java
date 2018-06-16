@@ -81,5 +81,11 @@ public abstract class Player {
 
         return max;
     }
+
+    @Override
+    public String toString() {
+        return "\n" + name + "'s field\n" + field.toString();
+    }
+
 }
 

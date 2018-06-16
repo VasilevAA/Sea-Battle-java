@@ -22,20 +22,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
-class FieldItem extends GridPane {
-
-    private Button[][] field = new Button[GameField.fieldSize][GameField.fieldSize];
-
-}
-
-
 /**
  * Class provides window with main menu
  */
 
 public class MainField extends Stage {
 
-    //TODO Button arrays is better place in class, that extends GridPane
     private Button[][] opponentField = new Button[GameField.fieldSize][GameField.fieldSize];
     private Button[][] playerField = new Button[GameField.fieldSize][GameField.fieldSize];
 
@@ -48,7 +40,7 @@ public class MainField extends Stage {
     private Label numberOfOpponentShips;
     private Label numberOfPlayerShips;
 
-    public static final int cellSize = 28;
+    private static final int cellSize = 28;
 
     public MainField(Game game) {
         this.game = game;
@@ -178,7 +170,7 @@ public class MainField extends Stage {
         Image ima = new Image("resources/img/style/sea.gif");
         grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 
-        drawShip(grid,game.getPlayer());
+        drawShip(grid, game.getPlayer());
         for (int i = 0; i < GameField.fieldSize; i++) {
             for (int j = 0; j < GameField.fieldSize; j++) {
                 Button but =
@@ -206,7 +198,7 @@ public class MainField extends Stage {
         grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
         Image im = new Image("resources/img/style/cursor.png");
 
-        drawShip(grid,game.getOpponent());
+        drawShip(grid, game.getOpponent());
         for (int i = 0; i < GameField.fieldSize; i++) {
             for (int j = 0; j < GameField.fieldSize; j++) {
                 Button but =
@@ -245,15 +237,15 @@ public class MainField extends Stage {
         for (Ship shep : ships) {
             int size = shep.getSize();
             int direction = shep.getOrientation();
-            ShipItem it = new ShipItem("resources/img/ships/" + size + ".png", (direction== 1 || direction==3 )? 1 : 2, size);
-            if(it.getDirection() ==2){
+            ShipItem it = new ShipItem("resources/img/ships/" + size + ".png", (direction == 1 || direction == 3) ? 1 : 2, size);
+            if (it.getDirection() == 2) {
                 it.rotate();
                 it.setDirection(2);
             }
             Point one = shep.getPoints()[0];
-            Point two = shep.getPoints()[shep.getPoints().length-1];
+            Point two = shep.getPoints()[shep.getPoints().length - 1];
 
-            Point fin =  new Point(one.getX() < two.getX() ? one.getX() : two.getX(),
+            Point fin = new Point(one.getX() < two.getX() ? one.getX() : two.getX(),
                     one.getY() < two.getY() ? one.getY() : two.getY());
 
             grid.add(it, fin.getX(), fin.getY(), it.getDirection() == 1 ? size : 1, it.getDirection() == 2 ? size : 1);

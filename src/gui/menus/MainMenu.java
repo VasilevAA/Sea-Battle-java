@@ -103,7 +103,7 @@ public class MainMenu {
 
         new FieldCreator(human).showAndWait();
 
-        if(human.getCellStatus(new Point(0,0)) == GameField.CellStatus.SHIP_SHOT){
+        if (human.getCellStatus(new Point(0, 0)) == GameField.CellStatus.SHIP_SHOT) {
             return;
         }
 

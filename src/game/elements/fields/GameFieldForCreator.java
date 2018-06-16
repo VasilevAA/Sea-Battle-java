@@ -2,11 +2,12 @@ package game.elements.fields;
 
 import game.elements.Point;
 import game.elements.ships.Ship;
+
 import java.util.ArrayList;
 
 
 /**
- * Next class is needed for FieldCreator.
+ * Next class is needed for FieldCreator in which user build custom field with ships.
  * these functions are responsible for creating "temporary"
  * field, in which "temp ships" will be located
  * On temp field EMPTYSHOTS cells represents cells, that forbidden for other ships.
@@ -34,12 +35,13 @@ public class GameFieldForCreator extends GameField {
         removeTempShip(getShip(point));
     }
 
+
     private void removeTempShip(Ship ship) {
         if (ship == null) {
             return;
         }
         tempShips.remove(ship);
-
+        System.out.println();
         ships = new Ship[tempShips.size()];
         ships = tempShips.toArray(ships);
 
@@ -54,14 +56,22 @@ public class GameFieldForCreator extends GameField {
             }
         }
 
-        for (Ship ship : ships) {
-            for (Point point : ship.getPoints()) {
-                setCellStatus(point, CellStatus.SHIP);
-            }
-            for (Point point : ship.getPointsAround()) {
-                setCellStatus(point, CellStatus.EMPTY_SHOT);
+        if (ships != null) {
+            for (Ship ship : ships) {
+                for (Point point : ship.getPoints()) {
+                    setCellStatus(point, CellStatus.SHIP);
+                }
+                for (Point point : ship.getPointsAround()) {
+                    setCellStatus(point, CellStatus.EMPTY_SHOT);
+                }
             }
         }
+    }
+
+    public void resetTempField() {
+        ships = null;
+        tempShips.clear();
+        updateTempField();
     }
 
     //for FieldCreator

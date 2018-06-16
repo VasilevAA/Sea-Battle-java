@@ -36,7 +36,7 @@ public class Game {
         } else {
             opponent.setCellStatus(point, GameField.CellStatus.SHIP_SHOT);
         }
-        player.setInfoAboutLastShot(point,opponent.getCellStatus(point),null,opponent.maxSizeOfAliveShips());
+        System.out.println(opponent);
     }
 
     public Player getWinner() {
@@ -56,7 +56,7 @@ public class Game {
         } else {
             tempShip = player.setCellStatus(point, GameField.CellStatus.SHIP_SHOT);
         }
-        opponent.setInfoAboutLastShot(point, player.getCellStatus(point), tempShip,player.maxSizeOfAliveShips());
+        opponent.setInfoAboutLastShot(point, player.getCellStatus(point), tempShip, player.maxSizeOfAliveShips());
 
         return point;
     }
