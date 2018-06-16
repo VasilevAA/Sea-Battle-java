@@ -21,14 +21,23 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+
+class FieldItem extends GridPane {
+
+    private Button[][] field = new Button[GameField.fieldSize][GameField.fieldSize];
+
+}
+
+
 /**
  * Class provides window with main menu
  */
 
 public class MainField extends Stage {
 
-    private Button[][] opponentField = new Button[10][10];
-    private Button[][] playerField = new Button[10][10];
+    //TODO Button arrays is better place in class, that extends GridPane
+    private Button[][] opponentField = new Button[GameField.fieldSize][GameField.fieldSize];
+    private Button[][] playerField = new Button[GameField.fieldSize][GameField.fieldSize];
 
     private Game game;
 
@@ -39,7 +48,7 @@ public class MainField extends Stage {
     private Label numberOfOpponentShips;
     private Label numberOfPlayerShips;
 
-    private static int cellSize = 28;
+    public static final int cellSize = 28;
 
     public MainField(Game game) {
         this.game = game;
@@ -78,8 +87,8 @@ public class MainField extends Stage {
     }
 
     private void updateFields() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < GameField.fieldSize; i++) {
+            for (int j = 0; j < GameField.fieldSize; j++) {
                 GameField.CellStatus status = game.getOpponent().getCellStatus(new Point(j, i));
 
                 if (status == GameField.CellStatus.SHIP_SHOT) {
@@ -170,8 +179,8 @@ public class MainField extends Stage {
         grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 
         drawShip(grid,game.getPlayer());
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < GameField.fieldSize; i++) {
+            for (int j = 0; j < GameField.fieldSize; j++) {
                 Button but =
                         playerField[i][j] = new Button(" ");
                 but.setMinSize(cellSize, cellSize);
@@ -198,8 +207,8 @@ public class MainField extends Stage {
         Image im = new Image("resources/img/style/cursor.png");
 
         drawShip(grid,game.getOpponent());
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < GameField.fieldSize; i++) {
+            for (int j = 0; j < GameField.fieldSize; j++) {
                 Button but =
                         opponentField[i][j] = new Button(" ");
                 but.setFocusTraversable(false);

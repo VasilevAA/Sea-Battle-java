@@ -4,12 +4,13 @@ import game.elements.Point;
 import game.elements.ships.Ship;
 
 /**
- * This class represent a gamefield - main container, which
+ * This class represent a game field - main container, which
  * include cells and ships.
  * Also class is needed for creating user's field in GUI with FieldCreator
  */
-
 public class GameField {
+
+    public static final int fieldSize = 10;
 
     //  States in which every cell can be
     public enum CellStatus {
@@ -17,17 +18,16 @@ public class GameField {
     }
 
     //  Cells
-    CellStatus[][] cells = new CellStatus[10][10];
+    CellStatus[][] cells = new CellStatus[GameField.fieldSize][GameField.fieldSize];
 
     //Ships on this field
     Ship[] ships = null;
 
 
     public GameField() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < fieldSize; i++) {
+            for (int j = 0; j < fieldSize; j++) {
                 cells[i][j] = CellStatus.EMPTY; //init cells with empty
-
             }
         }
     }

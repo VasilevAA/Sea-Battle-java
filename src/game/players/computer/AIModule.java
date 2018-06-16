@@ -177,8 +177,8 @@ class AIModule {
     }
 
     private boolean isCellCorrectForShot(Point p) {
-        return p != null && p.getX() >= 0 && p.getX() <= 9
-                && p.getY() >= 0 && p.getY() <= 9
+        return p != null && p.getX() >= 0 && p.getX() < GameField.fieldSize
+                && p.getY() >= 0 && p.getY() < GameField.fieldSize
                 && playersField.getCellStatus(p) == GameField.CellStatus.EMPTY;
     }
 
@@ -186,7 +186,7 @@ class AIModule {
     //returns only the points, that can fill current maximum ship of player
     private Point[] getExpectablePoints() {
 
-        Point[][] tempField = new Point[10][10];
+        Point[][] tempField = new Point[GameField.fieldSize][GameField.fieldSize];
         for (int i = 0; i < tempField.length; i++) {
             for (int j = 0; j < tempField.length; j++) {
                 tempField[i][j] = new Point(j, i);
@@ -194,8 +194,8 @@ class AIModule {
         }
 
         HashSet<Point> ret = new HashSet<>();
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < GameField.fieldSize; i++) {
+            for (int j = 0; j < GameField.fieldSize; j++) {
                 if (playersField.getCellStatus(new Point(j, i)) == GameField.CellStatus.EMPTY) {
                     ret.addAll(pointsForGivenPoint(new Point(j, i), tempField));
                 }

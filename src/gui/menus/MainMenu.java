@@ -24,6 +24,7 @@ public class MainMenu {
 
     private TextField inputNickname = new TextField("nickname");
 
+
     public void createMainMenu(Stage primaryStage) {
         VBox vb = new VBox(10);
         vb.setPadding(new Insets(10));
@@ -64,7 +65,6 @@ public class MainMenu {
         });
 
         vb.getChildren().addAll(hb1, findGameButton, createGameButton, new Separator(), createGameVsComputerButton);
-        primaryStage.show();
     }
 
 

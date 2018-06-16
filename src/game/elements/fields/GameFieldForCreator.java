@@ -48,8 +48,8 @@ public class GameFieldForCreator extends GameField {
 
     //update cells' statuses while creating user's field
     private void updateTempField() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < fieldSize; i++) {
+            for (int j = 0; j < fieldSize; j++) {
                 cells[i][j] = CellStatus.EMPTY;
             }
         }
@@ -70,7 +70,7 @@ public class GameFieldForCreator extends GameField {
             CellStatus status;
             switch (direction) {
                 case 1:
-                    if (firstPoint.getX() + size <= 10) {
+                    if (firstPoint.getX() + size <= fieldSize) {
                         status = cells[firstPoint.getY()][firstPoint.getX() + i];
                         if (status != CellStatus.EMPTY) {
                             return false;
@@ -80,7 +80,7 @@ public class GameFieldForCreator extends GameField {
                     }
                     break;
                 case 2:
-                    if (firstPoint.getY() + size <= 10) {
+                    if (firstPoint.getY() + size <= fieldSize) {
                         status = cells[firstPoint.getY() + i][firstPoint.getX()];
                         if (status != CellStatus.EMPTY) {
                             return false;

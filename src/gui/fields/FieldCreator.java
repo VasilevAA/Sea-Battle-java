@@ -39,7 +39,7 @@ public class FieldCreator extends Stage {
     private GameFieldForCreator field;
     private Player player;
 
-    private Button[][] playerField = new Button[10][10];
+    private Button[][] playerField = new Button[GameField.fieldSize][GameField.fieldSize];
 
     private FlowPane pane = null;
     private GridPane grid = null;
@@ -71,8 +71,8 @@ public class FieldCreator extends Stage {
         Image ima = new Image("resources/img/style/sea.gif");
         grid.setBackground(new Background(new BackgroundImage(ima, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < GameField.fieldSize; i++) {
+            for (int j = 0; j < GameField.fieldSize; j++) {
                 playerField[i][j] = makeCell(i, j);
                 grid.add(playerField[i][j], j, i);
             }
@@ -333,18 +333,18 @@ public class FieldCreator extends Stage {
     }
 
     private void updatePlayerField() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < GameField.fieldSize; i++) {
+            for (int j = 0; j < GameField.fieldSize; j++) {
                 GameField.CellStatus status = field.getCellStatus(new Point(j, i));
                 switch (status) {
                     case EMPTY:
                         playerField[i][j].setStyle("-fx-background-color: transparent;");
                         break;
                     case SHIP:
-                        playerField[i][j].setStyle("-fx-background-color: orange;");
+                        playerField[i][j].setStyle("-fx-background-color: rgba(255,255,0,0.3);");
                         break;
                     case EMPTY_SHOT:
-                        playerField[i][j].setStyle("-fx-background-color: rgba(255,255,255,0.5);");
+                        playerField[i][j].setStyle("-fx-background-color: rgba(255,255,255,0.3);");
                 }
             }
         }
@@ -369,7 +369,7 @@ public class FieldCreator extends Stage {
                 }
             }
 
-            if (direction == 2 || direction == 4 && it.getDirection() == 1) {
+            if (direction == 2 || direction == 4 && (it != null ? it.getDirection() : 0) == 1) {
                 assert it != null;
                 it.rotate();
             }

@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Class for producing randomly placed ships
  * <p>
- * Also class provide methods for filling ship's points and surroundings points.
+ * Also class provide 1methods for filling ship's points and surroundings points.
  */
 
 
@@ -20,7 +20,7 @@ public class ShipFactory {
     private static Ship[] tempShips = new Ship[10];
 
     //temporary field
-    private static GameField.CellStatus[][] tempField = new GameField.CellStatus[10][10];
+    private static GameField.CellStatus[][] tempField = new GameField.CellStatus[GameField.fieldSize][GameField.fieldSize];
 
     //Returns full set of correctly placed ships, that placed randomly on the field
     public static Ship[] getRandomlyPlacedShips() {
@@ -43,7 +43,7 @@ public class ShipFactory {
         int shipDirection; //1 - right, 2 - bot, 3 - left, 4 - top
         Point firstPoint;
         do {
-            firstPoint = new Point(new Random().nextInt(10), new Random().nextInt(10));
+            firstPoint = new Point(new Random().nextInt(GameField.fieldSize), new Random().nextInt(GameField.fieldSize));
             shipDirection = getCorrectDirectionForShip(firstPoint, ship.getSize(), new Random().nextInt(4) + 1);
         }
         while (shipDirection == 0);
@@ -70,7 +70,7 @@ public class ShipFactory {
             GameField.CellStatus status;
             switch (direction) {
                 case 1:
-                    if (firstPoint.getX() + size <= 10) {
+                    if (firstPoint.getX() + size <= GameField.fieldSize) {
                         status = tempField[firstPoint.getY()][firstPoint.getX() + i];
                         if (status != GameField.CellStatus.EMPTY) {
                             t = false;
@@ -80,7 +80,7 @@ public class ShipFactory {
                     }
                     break;
                 case 2:
-                    if (firstPoint.getY() + size <= 10) {
+                    if (firstPoint.getY() + size <= GameField.fieldSize) {
                         status = tempField[firstPoint.getY() + i][firstPoint.getX()];
                         if (status != GameField.CellStatus.EMPTY) {
                             t = false;
@@ -183,7 +183,7 @@ public class ShipFactory {
 
     private static boolean isPointCorrect(Point p) {
         return p.getX() >= 0 && p.getY() >= 0
-                && p.getX() <= 9 && p.getY() <= 9
+                && p.getX() < GameField.fieldSize && p.getY() < GameField.fieldSize
                 && (tempField[p.getY()][p.getX()] != GameField.CellStatus.SHIP);
     }
 }

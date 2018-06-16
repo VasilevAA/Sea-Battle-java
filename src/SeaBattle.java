@@ -9,6 +9,8 @@ public class SeaBattle extends Application {
         MainMenu menu = new MainMenu();
 
         menu.createMainMenu(primaryStage);
+
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
